@@ -218,6 +218,6 @@ function DataStoreRescope(address, dontmove)
     end
     
     %Create logfile for rescope operation
-    PushDownDocumenter(memToRescope, initialAddress, toRescopeAddress, address);
+    RescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, address);
 
 end
