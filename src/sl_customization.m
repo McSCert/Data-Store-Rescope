@@ -62,8 +62,8 @@ function state = RescopeFilter(callbackInfo)
         strcmp(get_param(gcb, 'BlockType'), 'DataStoreWrite') || ...
         strcmp(get_param(gcb, 'BlockType'), 'DataStoreMemory')) && ...
         strcmp(get_param(gcb, 'Selected'), 'on')
-            state= 'Enabled';
+            state = 'Enabled';
     else
-            state= 'Disabled';
+            state = 'Disabled';
     end
 end
