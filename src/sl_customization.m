@@ -1,6 +1,6 @@
 % Register custom menu function at the end of Simulink Editor's context menu
 function sl_customization(cm)
-  cm.addCustomMenuFcn('Simulink:ContextMenu', @getMcMasterTool);
+  cm.addCustomMenuFcn('Simulink:PreContextMenu', @getMcMasterTool);
   cm.addCustomFilterFcn('McMasterTool:RescopeSelected', @RescopeFilter);
   cm.addCustomFilterFcn('McMasterTool:RescopeNonSelected', @RescopeFilter);
 end
