@@ -32,7 +32,7 @@ function DataStoreRescope(address, dontmove)
         %get a list of data store read and write blocks
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
 		dataStoreBlocks = find_system(address, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
-		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i}); 
+		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i});
 
 		%find the lowest common ancestor of the data store read and write blocks.
         %start by assuming the first data store read block is the lowest
