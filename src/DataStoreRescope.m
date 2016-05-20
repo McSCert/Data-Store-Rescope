@@ -146,7 +146,7 @@ function DataStoreRescope(address, dontmove)
 		%move down all blocks and lines in the model
 		mdlLines = find_system(allKeys{i}, 'Searchdepth', 1, 'FollowLinks', 'on', 'LookUnderMasks', 'All', 'FindAll', 'on', 'Type', 'line');
     		allBlocks = find_system(allKeys{i}, 'SearchDepth', 1);
-    		allBlocks = setdiff(allBlocks, address);
+    		allBlocks = setdiff(allBlocks, allKeys{i});
     		annotations = find_system(allKeys{i}, 'FindAll', 'on', 'SearchDepth', 1, 'type', 'annotation');
 
     		%move all lines in the model downwards
