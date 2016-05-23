@@ -1,4 +1,4 @@
-function DataStoreRescope(modelName, dontmove)
+function DataStoreRescope(model, dontmove)
 % DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper 
 % scopes.
 %   DataStoreRescope(M, D) moves all Data Store Memory blocks in model M to
@@ -12,7 +12,7 @@ function DataStoreRescope(modelName, dontmove)
 %									% in the current Simulink system
     
 	% Find all Data Store Memory blocks in the model
-	dataStoreMem = find_system(modelName, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
+	dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
 
 	% Initial declarations
 	dataStoresToIgnore = {};
@@ -37,7 +37,7 @@ function DataStoreRescope(modelName, dontmove)
         
         % Get a list of data store read and write blocks
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
-		dataStoreBlocks = find_system(modelName, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
+		dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
 		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i});
 
 		% Find the lowest common ancestor of the data store read and write blocks.
@@ -224,6 +224,6 @@ function DataStoreRescope(modelName, dontmove)
     end
     
     % Create logfile ti document the operation
-    RescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, modelName);
+    RescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
 
 end
