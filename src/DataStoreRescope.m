@@ -1,19 +1,18 @@
-function DataStoreRescope(address, dontmove)
-% DATASTORERESCOPE Find Data Store Memory blocks in a model and move them to
-% their proper scope.
-%   dataStoreRescope(A, D) moves all Data Store Memory blocks in model at
-%   address A to their proper scopes, except for those in D, where:
-%		A is the Simulink model path
+function DataStoreRescope(modelName, dontmove)
+% DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper 
+% scopes.
+%   DataStoreRescope(M, D) moves all Data Store Memory blocks in model M to
+%    their proper scopes, except for those in D, where:
+%		M is the Simulink model name (or top-level system name)
 %		D is a cell array of Data Store Memory block path names
 %
 %	Example:
 %	
-%	dataStoreRescope(gcs, {})		% rescope all Data Store Memory blocks
+%	DataStoreRescope(bdroot, {})	% rescope all Data Store Memory blocks
 %									% in the current Simulink system
-
-
+    
 	% Find all Data Store Memory blocks in the model
-	dataStoreMem = find_system(address, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
+	dataStoreMem = find_system(modelName, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
 
 	% Initial declarations
 	dataStoresToIgnore = {};
@@ -38,7 +37,7 @@ function DataStoreRescope(address, dontmove)
         
         % Get a list of data store read and write blocks
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
-		dataStoreBlocks = find_system(address, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
+		dataStoreBlocks = find_system(modelName, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
 		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i});
 
 		% Find the lowest common ancestor of the data store read and write blocks.
@@ -225,6 +224,6 @@ function DataStoreRescope(address, dontmove)
     end
     
     % Create logfile ti document the operation
-    RescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, address);
+    RescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, modelName);
 
 end
