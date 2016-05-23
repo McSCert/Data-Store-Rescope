@@ -12,7 +12,6 @@ function RescopeSelected(address, dataStores)
         catch E
             disp(['Error using ' mfilename ':' char(10) ...
                 ' Selected block ' getfullname(dataStores{i}) ' is not a Data Store.'])
-            end
         end
         
         % Check if selected data store block is the DataStoreMemory block
