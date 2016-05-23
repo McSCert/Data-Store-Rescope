@@ -1,10 +1,18 @@
 function DataStoreRescope(address, dontmove)
-% DATASTORERESCOPE Find DataStoreMemory blocks in a model and move them to
+% DATASTORERESCOPE Find Data Store Memory blocks in a model and move them to
 % their proper scope.
-%   DataStoreRescope(address, dontmove) moves all DataStoreMemory blocks in
-%   model "address" to their proper scopes except for those in "dontmove".
+%   dataStoreRescope(A, D) moves all Data Store Memory blocks in model at
+%   address A to their proper scopes, except for those in D, where:
+%		A is the Simulink model path
+%		D is a cell array of Data Store Memory block path names
+%
+%	Example:
+%	
+%	dataStoreRescope(gcs, {})		% rescope all Data Store Memory blocks
+%									% in the current Simulink system
 
-	% Finds all data store memory blocks to check the scope for in the model
+
+	% Find all Data Store Memory blocks in the model
 	dataStoreMem = find_system(address, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
 
 	% Initial declarations
