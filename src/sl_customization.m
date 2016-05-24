@@ -26,7 +26,7 @@ function schema = getRescopeAll(callbackInfo)
 end
 
 function RescopeAllCallback(callbackInfo)
-    DataStoreRescope(gts, {});
+    DataStoreRescope(bdroot, {});
 end
 
 % Define Push Selected menu item
@@ -39,7 +39,7 @@ function schema = getRescopeSel(callbackInfo)
 end
 
 function RescopeSelCallback(callbackInfo)
-    RescopeSelected(gts, gcbs)
+    RescopeSelected(bdroot, gcbs)
 end
 
 % Define Push Non-Selected menu item
@@ -52,7 +52,7 @@ function schema = getRescopeNon(callbackInfo)
 end
 
 function RescopeNonCallback(callbackInfo)
-    DataStoreRescope(gts, gcbs);
+    DataStoreRescope(bdroot, gcbs);
 end
 
 %greys out menu options for Rescope Selected and Rescope Non-selected
