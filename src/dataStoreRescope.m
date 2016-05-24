@@ -10,6 +10,34 @@ function dataStoreRescope(model, dontmove)
 %	
 %	dataStoreRescope(bdroot, {})	% rescope all Data Store Memory blocks
 %									% in the current Simulink system
+
+    % Check model argument M
+    % 1) Ensure the model is open.
+    try
+        assert(bdIsLoaded(model));
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
+        help(mfilename)
+        return
+    end
+    
+    % 2) Check that model M is unlocked.
+    try
+        assert(strcmp(get_param(bdroot(address), 'Lock'), 'off'))
+    catch E
+        if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
+                strcmp(E.identifier, 'MATLAB:assertion:failed')
+            disp(['Error using ' mfilename ':' char(10) ...
+                ' File is locked.'])
+            return
+        else
+            disp(['Error using ' mfilename ':' char(10) ...
+                ' Invalid address argument A.' char(10)])
+            help(mfilename)
+            return
+        end
+    end
     
 	% Find all Data Store Memory blocks in the model
 	dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
@@ -50,8 +78,6 @@ function dataStoreRescope(model, dontmove)
             % its lowest common ancestor is set as its own location
             if strcmp(E.identifier, 'MATLAB:badsubscript')
                 lowestCommonAncestor = initialLocation;
-            else
-                disp('Line 41: An error has occurred trying to access a data store read or write parameter.')
             end
         end
 
@@ -223,7 +249,7 @@ function dataStoreRescope(model, dontmove)
 
     end
     
-    % Create logfile ti document the operation
+    % Create logfile to document the operation
     rescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
 
 end
