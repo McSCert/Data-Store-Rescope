@@ -11,7 +11,7 @@ function dataStoreRescope(model, dontmove)
 %	dataStoreRescope(bdroot, {})	% rescope all Data Store Memory blocks
 %									% in the current Simulink system
 
-    % Check model argument M
+    % Check model argument M.
     % 1) Ensure the model is open.
     try
         assert(bdIsLoaded(model));
@@ -33,10 +33,19 @@ function dataStoreRescope(model, dontmove)
             return
         else
             disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid address argument A.' char(10)])
+                ' Invalid model argument M.' char(10)])
             help(mfilename)
             return
         end
+    end
+    
+    % Check that D is of type 'cell'
+    try
+        assert(iscell(dontpush)==true);
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Invalid cell argument D.' char(10)])
+        help(mfilename)
     end
     
 	% Find all Data Store Memory blocks in the model
