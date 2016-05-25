@@ -1,7 +1,8 @@
 function dataStoreRescope(model, dontmove)
 % DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper 
 % scopes.
-%   dataStoreRescope(M, D) moves all Data Store Memory blocks in model M to
+%
+%   DATASTORERESCOPE(M, D) moves all Data Store Memory blocks in model M to
 %    their proper scopes, except for those in D, where:
 %		M is the Simulink model name (or top-level system name)
 %		D is a cell array of Data Store Memory block path names
@@ -11,8 +12,8 @@ function dataStoreRescope(model, dontmove)
 %	dataStoreRescope(bdroot, {})	% rescope all Data Store Memory blocks
 %									% in the current Simulink system
 
-    % Check model argument M.
-    % 1) Ensure the model is open.
+    % Check model argument M
+    % 1) Ensure the model is open
     try
         assert(bdIsLoaded(model));
     catch
@@ -22,7 +23,7 @@ function dataStoreRescope(model, dontmove)
         return
     end
     
-    % 2) Check that model M is unlocked.
+    % 2) Check that model M is unlocked
     try
         assert(strcmp(get_param(bdroot(address), 'Lock'), 'off'))
     catch E
@@ -33,7 +34,7 @@ function dataStoreRescope(model, dontmove)
             return
         else
             disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid model argument M.' char(10)])
+                ' Invalid model name argument M.' char(10)])
             help(mfilename)
             return
         end
@@ -41,7 +42,7 @@ function dataStoreRescope(model, dontmove)
     
     % Check that D is of type 'cell'
     try
-        assert(iscell(dontpush)==true);
+        assert(iscell(dontpush));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Invalid cell argument D.' char(10)])

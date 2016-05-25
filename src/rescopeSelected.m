@@ -1,8 +1,17 @@
 function rescopeSelected(model, dataStores)
-% RESCOPESELECTED Run the DataStoreRescope function on the selected Data 
+% RESCOPESELECTED Run the dataStoreRescope function on the selected Data 
 % Store Memory blocks.
-%   RescopeSelected(M, D) calls the DataStoreRescope function on model M
-%   such that the Data Store Memory blocks listed in D are rescoped.
+%
+%   RESCOPESELECTED(M, D) calls the dataStoreRescope function on model M
+%   such that only the Data Store Memory blocks listed in D are rescoped, 
+%   where:
+%       M is the Simulink model name (or top-level system name)
+%       D is a cell array of Data Store Memory block path names
+%
+%   Example:
+%   
+%   rescopeSelected(bdroot, gcbs)    % rescope the selected Data Store Memory
+%                                    % blocks in the current Simulink system
 
     toRescope = {};
     for i = 1:length(dataStores)
