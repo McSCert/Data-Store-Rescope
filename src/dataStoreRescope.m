@@ -25,7 +25,7 @@ function dataStoreRescope(model, dontmove)
     
     % 2) Check that model M is unlocked
     try
-        assert(strcmp(get_param(bdroot(address), 'Lock'), 'off'))
+        assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
