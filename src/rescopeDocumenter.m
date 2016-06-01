@@ -10,6 +10,51 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 % The first three parameters must be of the same length, equal to the 
 % number of moved data stores.
 
+    % Perform checks to verify arguments are correct
+    % 1) Ensurethat rescopedBlocks, initialAddresses, rescopeAddresses are
+    % cell arrays
+    try
+        assert(iscellstr(rescopedBlocks)==1)
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Input argument DSM is not a cell array of strings.'])
+        help(mfilename)
+        return
+    end
+    
+    try
+        assert(iscellstr(initialAddresses)==1)
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Input argument A1 is not a cell array of strings.'])
+        help(mfilename)
+        return
+    end
+    
+    try
+        assert(iscellstr(rescopeAddresses)==1)
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Input argument A2 is not a cell array of strings.'])
+        help(mfilename)
+        return
+    end
+    
+    % 2) Check that rescopedBlocks, initialAddresses, rescopeAddresses are
+    % the same length
+    try
+        assert(length(rescopedBlocks) == length(initialAddresses) == ...
+            length(rescopeAddresses));
+    catch E
+        if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
+                strcmp(E.identifier, 'MATLAB:assertion:failed')
+            disp(['Error using ' mfilename ':' char(10) ...
+                ' Input arguments DSM, A1, and A2 are of different lengths.'])
+            help(mfilename)
+        end
+        return
+    end
+
     % Get totals
     total = length(find_system(model, 'BlockType', 'DataStoreMemory'));
     numRescoped = length(rescopedBlocks);
