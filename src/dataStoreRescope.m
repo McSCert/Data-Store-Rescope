@@ -126,7 +126,7 @@ function dataStoreRescope(model, dontmove)
 		% (library subsystem) where data store memory blocks shouldn't be
 		% rescoped
 		notRef = false;
-		isRef = '';
+
 		while ~notRef
             % Check if lowest common ancestor is in a referenced subsystem
 			try
