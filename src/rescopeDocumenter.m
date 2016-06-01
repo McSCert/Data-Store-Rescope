@@ -43,8 +43,8 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     % 2) Check that rescopedBlocks, initialAddresses, rescopeAddresses are
     % the same length
     try
-        assert(length(rescopedBlocks) == length(initialAddresses) == ...
-            length(rescopeAddresses));
+        assert((length(rescopedBlocks) == length(initialAddresses)) && ...
+            (length(rescopeAddresses)==length(rescopedBlocks)));
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
                 strcmp(E.identifier, 'MATLAB:assertion:failed')

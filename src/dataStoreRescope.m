@@ -42,11 +42,12 @@ function dataStoreRescope(model, dontmove)
     
     % Check that D is of type 'cell'
     try
-        assert(iscell(dontpush));
+        assert(iscell(dontmove));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Invalid cell argument D.' char(10)])
         help(mfilename)
+        return
     end
     
 	% Find all Data Store Memory blocks in the model
