@@ -11,10 +11,10 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 % number of moved data stores.
 
     % Perform checks to verify arguments are correct
-    % 1) Ensurethat rescopedBlocks, initialAddresses, rescopeAddresses are
+    % 1) Ensure that rescopedBlocks, initialAddresses, rescopeAddresses are
     % cell arrays
     try
-        assert(iscellstr(rescopedBlocks)==1)
+        assert(iscellstr(rescopedBlocks))
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Input argument DSM is not a cell array of strings.'])
@@ -23,7 +23,7 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     end
     
     try
-        assert(iscellstr(initialAddresses)==1)
+        assert(iscellstr(initialAddresses))
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Input argument A1 is not a cell array of strings.'])
@@ -32,7 +32,7 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     end
     
     try
-        assert(iscellstr(rescopeAddresses)==1)
+        assert(iscellstr(rescopeAddresses))
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Input argument A2 is not a cell array of strings.'])
@@ -44,7 +44,7 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     % the same length
     try
         assert((length(rescopedBlocks) == length(initialAddresses)) && ...
-            (length(rescopeAddresses)==length(rescopedBlocks)));
+            (length(rescopeAddresses) == length(rescopedBlocks)));
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
                 strcmp(E.identifier, 'MATLAB:assertion:failed')

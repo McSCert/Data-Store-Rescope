@@ -34,7 +34,7 @@ function rescopeSelected(model, dataStores)
     for i = 1:length(dataStores)
         
         % Check if block in list dataStores is a Data Store block
-        blockType=get_param(dataStores{i}, 'BlockType');
+        blockType = get_param(dataStores{i}, 'BlockType');
         try
             assert(strcmp(blockType, 'DataStoreRead') || ...
                 strcmp(blockType, 'DataStoreWrite') || ...
