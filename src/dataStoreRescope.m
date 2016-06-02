@@ -226,41 +226,47 @@ function dataStoreRescope(model, dontmove)
 		DSCell = addressMap(allKeys{i});
         
         % For each Data Store in the list
-		for DSM = 1:numDS
+        for DSM = 1:numDS
             % Get the parameters for its position
-			if (ceil(DSM/10) > 1)
-				top = 30+50*(ceil(DSM/10)-1);
-				if (mod(DSM, 10) == 1)
-					start = 30;
-				end
-			end
-
-			try
-                % Get parameters for the new block
-				Name = get_param(DSCell{DSM}, 'Name');
-                
-                % Create new pushed data store memory block
-				rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/Pushed_' Name]);
-                
-                % Remove old block
-				delete_block(DSCell{DSM});
-                
-                % Adjust position of the newly rescoped DataStoreMemory block
-				rsDSMemPos = get_param(rescopedDSMem, 'Position');
-				newPos(1) = start;
-				newPos(2) = top;
-				newPos(3) = start + rsDSMemPos(3) - rsDSMemPos(1);
-				newPos(4) = top + rsDSMemPos(4) - rsDSMemPos(2);
-				start = newPos(3) + 20;
-				set_param([allKeys{i} '/Pushed_' Name], 'Position', newPos);
-				newPos = [];
-            catch
-                % Catches error if the block has already been rescoped
-				errorstring = sprintf('Block named %s is already pushed down', getfullname(DSCell{DSM}));
-				disp(errorstring);
-			end
-		end
-
+            if (ceil(DSM/10) > 1)
+                top = 30+50*(ceil(DSM/10)-1);
+                if (mod(DSM, 10) == 1)
+                    start = 30;
+                end
+            end
+            
+            % Get parameters for the new block
+            Name = get_param(DSCell{DSM}, 'Name');
+            
+            % Create new pushed data store memory block
+            flag=true;
+            n=1;
+            while flag
+                try
+                    rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' Name]);
+                    flag=false;
+                catch E
+                    if strcmp(E.identifier, Simulink:Commands:AddBlockCantAdd)
+                        Name=[Name '_' n];
+                        n=n+1;
+                    end
+                end
+            end
+            
+            % Remove old block
+            delete_block(DSCell{DSM});
+            
+            % Adjust position of the newly rescoped DataStoreMemory block
+            rsDSMemPos = get_param(rescopedDSMem, 'Position');
+            newPos(1) = start;
+            newPos(2) = top;
+            newPos(3) = start + rsDSMemPos(3) - rsDSMemPos(1);
+            newPos(4) = top + rsDSMemPos(4) - rsDSMemPos(2);
+            start = newPos(3) + 20;
+            set_param([allKeys{i} '/' Name], 'Position', newPos);
+            newPos = [];
+        end
+        
     end
     
     % Create logfile to document the operation
