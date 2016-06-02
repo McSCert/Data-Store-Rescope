@@ -249,7 +249,7 @@ function dataStoreRescope(model, dontmove)
                     flag = false;
                 catch E
                     if strcmp(E.identifier, 'Simulink:Commands:AddBlockCantAdd')
-                        Name = [Name '_' num2str(n)];
+                        Name = [oldName '_' num2str(n)];
                         n = n + 1;
                     end
                 end
