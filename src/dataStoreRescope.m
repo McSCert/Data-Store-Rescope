@@ -18,7 +18,7 @@ function dataStoreRescope(model, dontmove)
         assert(bdIsLoaded(model));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
-            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
+            'Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
         help(mfilename)
         return
     end
@@ -34,7 +34,7 @@ function dataStoreRescope(model, dontmove)
             return
         else
             disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid model name argument M.' char(10)])
+                'Invalid model name argument M.' char(10)])
             help(mfilename)
             return
         end
@@ -170,7 +170,7 @@ function dataStoreRescope(model, dontmove)
 	end
 
 	% For each block to rescope, add it to the list of blocks to be rescoped
-	% for its corresponding toPushAddress
+	% for its corresponding toRescopeAddress
 	for i = 1:length(memToRescope)
 		temp = addressMap(toRescopeAddress{i});
 		temp{end+1} = memToRescope{i};
@@ -236,31 +236,35 @@ function dataStoreRescope(model, dontmove)
             end
             
             % Get parameters for the new block
-            Name = get_param(DSCell{DSM}, 'Name');
+            name = get_param(DSCell{DSM}, 'Name');
             
             % Create new pushed data store memory block. If a block with
             % 'Name' parameter already exists, add a number to suffix it.
             flag = true;
             n = 1;
-            oldName = Name;
+            oldName = name;
             while flag
                 try
-                    rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' Name]);
+                    rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' name]);
                     flag = false;
                 catch E
                     if strcmp(E.identifier, 'Simulink:Commands:AddBlockCantAdd')
-                        Name = [oldName ' ' num2str(n)];
+                        name = [oldName ' ' num2str(n)];
                         n = n + 1;
                     end
                 end
             end
             
             % Display warning message if 'Name' parameter of a pushed block
-            % was changed.
-            if ~strcmp(oldName, Name)
-                warnStr = ['Warning: Block with name %s already exists at ' ...
-                    '%s. Rescoped block has been renamed %s.'];
-                warning(sprintf(warnStr, oldName, allKeys{i}, Name));
+            % was changed
+            if ~strcmp(oldName, name)
+               % Display names containing newlines with spaces instead
+               oldName(oldName == char(10)) = ' ';
+               
+                disp(['Warning using ' mfilename ':' char(10) ...
+                ' Data Store Memory block with name "' oldName ...
+                '" already exists at ' allKeys{i} '. The rescoped block' ...
+                ' has been renamed to "' name '".'])
             end
             
             % Remove old block
@@ -273,10 +277,9 @@ function dataStoreRescope(model, dontmove)
             newPos(3) = start + rsDSMemPos(3) - rsDSMemPos(1);
             newPos(4) = top + rsDSMemPos(4) - rsDSMemPos(2);
             start = newPos(3) + 20;
-            set_param([allKeys{i} '/' Name], 'Position', newPos);
+            set_param([allKeys{i} '/' name], 'Position', newPos);
             newPos = [];
-        end
-        
+        end 
     end
     
     % Create logfile to document the operation
