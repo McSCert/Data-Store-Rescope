@@ -61,7 +61,10 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     
     % Open logfile
     filename = [model '_RescopeLog.txt'];
-    file = fopen(filename, 'wt');
+    file = fopen(filename, 'at');
+    
+    % Print current time and date
+    fprintf(file, 'Log of rescope operation at date and time: %s\n\n', datestr(now));
     
     % Print overall statistics for the whole model
     fprintf(file, 'Total number of Data Store Memory blocks in model: %d\n', total);
