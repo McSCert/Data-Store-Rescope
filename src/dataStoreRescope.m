@@ -169,17 +169,19 @@ function dataStoreRescope(model, dontmove)
 		addressMap(toRescopeAddress{i}) = {};
 	end
 
-	% For each block to push, add it to the list of blocks to be pushed for its corresponding toPushAddress
+	% For each block to rescope, add it to the list of blocks to be rescoped
+	% for its corresponding toPushAddress
 	for i = 1:length(memToRescope)
 		temp = addressMap(toRescopeAddress{i});
 		temp{end+1} = memToRescope{i};
 		addressMap(toRescopeAddress{i}) = temp;
     end
 
-	% Iterate through each address where data store memory blocks are being rescoped, and move the blocks to their corresponding address
+	% Iterate through each address where data store memory blocks are being 
+	% rescoped, and move the blocks to their corresponding address
 	allKeys = keys(addressMap);
 	for i = 1:length(allKeys)
-		% Setup for moving data store memory blocks to the top of the model
+		% Setup for moving Data Store Memory blocks to the top of the model
 		start = 30;
 		top = 30;
     	numDS = length(addressMap(allKeys{i}));
@@ -192,7 +194,7 @@ function dataStoreRescope(model, dontmove)
     	allBlocks = setdiff(allBlocks, allKeys{i});
     	annotations = find_system(allKeys{i}, 'FindAll', 'on', 'SearchDepth', 1, 'type', 'annotation');
 
-    	% Move all lines in the model downwards
+    	% Move all lines downwards
 		for zm = 1:length(mdlLines)
 			lPint = get_param(mdlLines(zm), 'Points');
 		 	xPint = lPint(:, 1); % First position integer
@@ -220,10 +222,10 @@ function dataStoreRescope(model, dontmove)
 		 	set_param(annotations(gg), 'Position', bPosition);
         end
         
-        % Get the list of data stores being rescoped to this address
+        % Get the list of Data Stores being rescoped to this address
 		DSCell = addressMap(allKeys{i});
         
-        % For each data store in the list
+        % For each Data Store in the list
 		for DSM = 1:numDS
             % Get the parameters for its position
 			if (ceil(DSM/10) > 1)
@@ -232,6 +234,7 @@ function dataStoreRescope(model, dontmove)
 					start = 30;
 				end
 			end
+
 			try
                 % Get parameters for the new block
 				Name = get_param(DSCell{DSM}, 'Name');
@@ -242,7 +245,7 @@ function dataStoreRescope(model, dontmove)
                 % Remove old block
 				delete_block(DSCell{DSM});
                 
-                % Adjust position of the new rescoped DataStoreMemory block
+                % Adjust position of the newly rescoped DataStoreMemory block
 				rsDSMemPos = get_param(rescopedDSMem, 'Position');
 				newPos(1) = start;
 				newPos(2) = top;
