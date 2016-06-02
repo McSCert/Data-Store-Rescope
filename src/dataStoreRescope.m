@@ -238,9 +238,11 @@ function dataStoreRescope(model, dontmove)
             % Get parameters for the new block
             Name = get_param(DSCell{DSM}, 'Name');
             
-            % Create new pushed data store memory block
+            % Create new pushed data store memory block. If a block with
+            % 'Name' parameter already exists, add a number to suffix it.
             flag=true;
             n=1;
+            oldName=Name;
             while flag
                 try
                     rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' Name]);
@@ -251,6 +253,14 @@ function dataStoreRescope(model, dontmove)
                         n=n+1;
                     end
                 end
+            end
+            
+            % Display warning message if 'Name' parameter of a pushed block
+            % was changed.
+            if ~strcmp(oldName, Name)
+                warnStr=['Warning: Block with name %s already exists at ' ...
+                    '%s. Rescoped block has been renamed %s.'];
+                warning(sprintf(warnStr, oldName, allKeys{i}, Name));
             end
             
             % Remove old block
