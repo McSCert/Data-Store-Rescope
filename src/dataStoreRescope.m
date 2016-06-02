@@ -240,17 +240,17 @@ function dataStoreRescope(model, dontmove)
             
             % Create new pushed data store memory block. If a block with
             % 'Name' parameter already exists, add a number to suffix it.
-            flag=true;
-            n=1;
-            oldName=Name;
+            flag = true;
+            n = 1;
+            oldName = Name;
             while flag
                 try
                     rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' Name]);
-                    flag=false;
+                    flag = false;
                 catch E
-                    if strcmp(E.identifier, Simulink:Commands:AddBlockCantAdd)
-                        Name=[Name '_' n];
-                        n=n+1;
+                    if strcmp(E.identifier, 'Simulink:Commands:AddBlockCantAdd')
+                        Name = [Name '_' n];
+                        n = n + 1;
                     end
                 end
             end
@@ -258,7 +258,7 @@ function dataStoreRescope(model, dontmove)
             % Display warning message if 'Name' parameter of a pushed block
             % was changed.
             if ~strcmp(oldName, Name)
-                warnStr=['Warning: Block with name %s already exists at ' ...
+                warnStr = ['Warning: Block with name %s already exists at ' ...
                     '%s. Rescoped block has been renamed %s.'];
                 warning(sprintf(warnStr, oldName, allKeys{i}, Name));
             end
