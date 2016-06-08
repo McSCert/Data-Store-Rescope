@@ -76,29 +76,29 @@ function dataStoreRescope(model, dontmove)
         
         % Get other data store memory blocks that share the same name
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
-        memsWithSameName=find_system(initialLocation, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
+        memsWithSameName=find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
         memsWithSameName=setdiff(memsWithSameName, dataStoreMem{i});
         
         memSplit=regexp(initialLocation, '/', 'split');
         currentLowerBound=[];
         pushDownOnly=false;
-        otherMemLevels={};
+        memsAboveLevels={};
         
         %get bounds on the scope of the data store
         for j=1:length(memsWithSameName)
             otherMemLevel=get_param(memsWithSameName{j}, 'parent');
             otherMemSplit=regexp(otherMemLevel, '/', 'split');
-            intersect=intersect(otherMemSplit, memSplit);
-            if length(intersect)==length(otherMemLevel)
+            inter=intersect(otherMemSplit, memSplit);
+            if length(inter)==length(otherMemLevel)
                 pushDownOnly=true;
-            elseif length(intersect)==length(memLevel)
+                memsAboveLevels{end+1}=otherMemLevel;
+            elseif length(inter)==length(memSplit)
                 if length(otherMemLevel)<length(currentLowerBound)|| ...
                         isempty(currentLowerBound)
                     currentLowerBound=otherMemLevel;
                 end
             else
                 pushDownOnly=true;
-                otherMemLevels{end+1}=otherMemLevel;
             end
         end
         
@@ -126,6 +126,8 @@ function dataStoreRescope(model, dontmove)
             % store block name into substrings for each subsystem in the block path
 			LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
 			dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
+            dataStoreLevel=get_param(dataStoreReadWrite{j}, 'parent');
+            dataStoreLevelSplit=regexp(dataStoreLevel, '/', 'split');
             
             % Check if the data store read/write is in the scope of this
             % particular data store
@@ -135,27 +137,18 @@ function dataStoreRescope(model, dontmove)
             % don't consider blocks that could be in that data store's
             % scope
             if pushDownOnly
-                intersect=intersect(memSplit, dataStoreSubstrings);
-                if (length(intersect)==length(dataStoreSubstrings)) || ...
-                        ((length(intersect)<length(dataStoreSubstrings)) && ...
-                        (length(intersect)<length(memSplit)))
+                inter=intersect(dataStoreLevelSplit, memSplit);
+                if length(inter)~=length(memSplit)
                     flag=true;
-                    for k=1:length(otherMemLevels)
-                        otherMemSplit=regexp(otherMemLevels{k}, '/', 'split');
-                        intersect=intersect(otherMemSplit, dataStoreSubstrings);
-                        if length(intersect)==length(otherMemSplit)
+                    for k=1:length(memsAboveLevels)
+                        memsAboveSplit=regexp(memsAboveLevels{k}, '/', 'split');
+                        inter=intersect(memsAboveSplit, dataStoreLevelSplit);
+                        if length(inter)==length(memsAboveSplit)
                             flag=false;
                         end
                     end
                     if flag
-                        warnstr=['Warning: Block ''%s'' is outside of the ' ...
-                            'scope of all Data Store Memory blocks. There ' ...
-                            'are multiple Data Store Memory blocks that ' ...
-                            'share a ''DataStoreName'' parameter with the ' ...
-                            'block. Please move the desired Data Store Memory ' ...
-                            'block such that the read/write will be in its scope to ' ...
-                            'root level, then run the tool again.'];
-                        warning(warnstr, dataStoreReadWrite{j});
+                        warning('placeholder');
                     end
                     continue
                 end
@@ -165,8 +158,8 @@ function dataStoreRescope(model, dontmove)
             % one in the subsystem hierarchy that shares a DataStoreName,
             % don't consider blocks in that data store memory's scope
             if ~isempty(currentLowerBound)
-                intersect=intersect(dataStoreSubstrings, currentLowerBound);
-                if length(intersect)==length(currentLowerBound)
+                inter=intersect(dataStoreLevelSplit, currentLowerBound);
+                if length(inter)==length(currentLowerBound)
                     continue
                 end
             end
