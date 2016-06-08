@@ -82,7 +82,7 @@ function dataStoreRescope(model, dontmove)
         memSplit=regexp(initialLocation, '/', 'split');
         currentLowerBound=[];
         pushDownOnly=false;
-        otherDataStoreMems={};
+        otherMemLevels={};
         
         %get bounds on the scope of the data store
         for j=1:length(memsWithSameName)
