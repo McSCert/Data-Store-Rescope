@@ -74,8 +74,36 @@ function dataStoreRescope(model, dontmove)
 		% Get initial location, name of the data store
 		initialLocation = get_param(dataStoreMem{i}, 'parent');
         
-        % Get a list of data store read and write blocks
+        % Get other data store memory blocks that share the same name
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
+        memsWithSameName=find_system(initialLocation, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
+        memsWithSameName=setdiff(memsWithSameName, dataStoreMem{i});
+        
+        memSplit=regexp(initialLocation, '/', 'split');
+        currentLowerBound=[];
+        pushDownOnly=false;
+        otherDataStoreMems={};
+        
+        %get bounds on the scope of the data store
+        for j=1:length(memsWithSameName)
+            otherMemLevel=get_param(memsWithSameName{j}, 'parent');
+            otherMemSplit=regexp(otherMemLevel, '/', 'split');
+            intersect=intersect(otherMemSplit, memSplit);
+            if length(intersect)==length(otherMemLevel)
+                pushDownOnly=true;
+            elseif length(intersect)==length(memLevel)
+                if length(otherMemLevel)<length(currentLowerBound)|| ...
+                        isempty(currentLowerBound)
+                    currentLowerBound=otherMemLevel;
+                end
+            else
+                pushDownOnly=true;
+                otherMemLevels{end+1}=otherMemLevel;
+            end
+        end
+        
+        
+        % Get a list of data store read and write blocks
 		dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
 		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i});
 
@@ -93,11 +121,56 @@ function dataStoreRescope(model, dontmove)
         end
 
 		for j = 2:length(dataStoreReadWrite)
+            
 			% Split off current lowest common ancestor name and current data
             % store block name into substrings for each subsystem in the block path
 			LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
 			dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
             
+            % Check if the data store read/write is in the scope of this
+            % particular data store
+            
+            % If there's a data store memory block higher than the current
+            % one in the subsystem hierarchy that shares a DataStoreName,
+            % don't consider blocks that could be in that data store's
+            % scope
+            if pushDownOnly
+                intersect=intersect(memSplit, dataStoreSubstrings);
+                if (length(intersect)==length(dataStoreSubstrings)) || ...
+                        ((length(intersect)<length(dataStoreSubstrings)) && ...
+                        (length(intersect)<length(memSplit)))
+                    flag=true;
+                    for k=1:length(otherMemLevels)
+                        otherMemSplit=regexp(otherMemLevels{k}, '/', 'split');
+                        intersect=intersect(otherMemSplit, dataStoreSubstrings);
+                        if length(intersect)==length(otherMemSplit)
+                            flag=false;
+                        end
+                    end
+                    if flag
+                        warnstr=['Warning: Block ''%s'' is outside of the ' ...
+                            'scope of all Data Store Memory blocks. There ' ...
+                            'are multiple Data Store Memory blocks that ' ...
+                            'share a ''DataStoreName'' parameter with the ' ...
+                            'block. Please move the desired Data Store Memory ' ...
+                            'block such that the read/write will be in its scope to ' ...
+                            'root level, then run the tool again.'];
+                        warning(warnstr, dataStoreReadWrite{j});
+                    end
+                    continue
+                end
+            end
+            
+            % If there's a data store memory block lower than the current
+            % one in the subsystem hierarchy that shares a DataStoreName,
+            % don't consider blocks in that data store memory's scope
+            if ~isempty(currentLowerBound)
+                intersect=intersect(dataStoreSubstrings, currentLowerBound);
+                if length(intersect)==length(currentLowerBound)
+                    continue
+                end
+            end
+                      
             % Initialize variables for the lowest common ancestor while loop
 			flag = 1;
 			lowestCommonAncestor = '';
