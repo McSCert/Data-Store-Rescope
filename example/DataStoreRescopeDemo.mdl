@@ -1,5 +1,5 @@
 Model {
-  Name			  "PushDownDemo"
+  Name			  "DataStoreRescopeDemo"
   Version		  7.8
   MdlSubVersion		  0
   GraphicalInterface {
@@ -42,7 +42,7 @@ Model {
       Name		      "Out4"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.18"
+    ComputedModelVersion    "1.20"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -61,11 +61,11 @@ Model {
   Creator		  "Ben"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "monika"
+  LastModifiedBy	  "T6684MB"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Mar 03 17:36:33 2016"
-  RTWModifiedTimeStamp	  378927377
-  ModelVersionFormat	  "1.%<AutoIncrement:18>"
+  LastModifiedDate	  "Wed Jun 08 13:16:17 2016"
+  RTWModifiedTimeStamp	  387292576
+  ModelVersionFormat	  "1.%<AutoIncrement:20>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -646,13 +646,6 @@ Model {
 	  Version		  "1.11.1"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
-	  Array {
-	    Type		    "Cell"
-	    Dimension		    1
-	    Cell		    ""
-	    PropName		    "HDLConfigFile"
-	  }
-	  HDLCActiveTab		  "0"
 	}
 	PropName		"Components"
       }
@@ -792,8 +785,8 @@ Model {
     }
   }
   System {
-    Name		    "PushDownDemo"
-    Location		    [2, 82, 1662, 1021]
+    Name		    "DataStoreRescopeDemo"
+    Location		    [490, 239, 1427, 856]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -889,8 +882,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Subsystem"
-	Location		[2, 82, 1662, 1021]
-	Open			off
+	Location		[491, 240, 1427, 855]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -906,7 +899,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "In1"
 	  SID			  "6"
-	  Position		  [110, 173, 140, 187]
+	  Position		  [200, 158, 230, 172]
 	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
@@ -914,7 +907,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "In2"
 	  SID			  "8"
-	  Position		  [110, 248, 140, 262]
+	  Position		  [200, 233, 230, 247]
 	  ZOrder		  -1
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -923,7 +916,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "In3"
 	  SID			  "10"
-	  Position		  [110, 323, 140, 337]
+	  Position		  [200, 308, 230, 322]
 	  ZOrder		  -1
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -943,7 +936,7 @@ Model {
 	  Name			  "Subsystem"
 	  SID			  "15"
 	  Ports			  [3, 4]
-	  Position		  [195, 137, 325, 368]
+	  Position		  [285, 122, 415, 353]
 	  ZOrder		  -17
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -954,8 +947,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Subsystem"
-	    Location		    [2, 82, 1902, 1037]
-	    Open		    off
+	    Location		    [489, 237, 1428, 853]
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -971,7 +964,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "In1"
 	      SID		      "16"
-	      Position		      [90, 178, 120, 192]
+	      Position		      [180, 158, 210, 172]
 	      ZOrder		      -1
 	      IconDisplay	      "Port number"
 	    }
@@ -979,7 +972,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "In2"
 	      SID		      "18"
-	      Position		      [90, 288, 120, 302]
+	      Position		      [180, 268, 210, 282]
 	      ZOrder		      -1
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -988,7 +981,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "In3"
 	      SID		      "20"
-	      Position		      [90, 408, 120, 422]
+	      Position		      [180, 388, 210, 402]
 	      ZOrder		      -1
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -998,7 +991,7 @@ Model {
 	      Name		      "Data Store\nWrite"
 	      SID		      "41"
 	      Ports		      [1]
-	      Position		      [220, 400, 250, 430]
+	      Position		      [310, 380, 340, 410]
 	      ZOrder		      -6
 	      DataStoreName	      "B"
 	    }
@@ -1007,7 +1000,7 @@ Model {
 	      Name		      "Subsystem"
 	      SID		      "26"
 	      Ports		      [2, 4]
-	      Position		      [180, 128, 295, 347]
+	      Position		      [270, 108, 385, 327]
 	      ZOrder		      -17
 	      MinAlgLoopOccurrences   off
 	      PropExecContextOutsideSubsystem off
@@ -1018,8 +1011,8 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Subsystem"
-		Location		[2, 82, 1902, 1037]
-		Open			off
+		Location		[488, 234, 1428, 856]
+		Open			on
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -1035,7 +1028,7 @@ Model {
 		  BlockType		  Inport
 		  Name			  "In1"
 		  SID			  "27"
-		  Position		  [80, 218, 110, 232]
+		  Position		  [150, 208, 180, 222]
 		  ZOrder		  -1
 		  IconDisplay		  "Port number"
 		}
@@ -1043,7 +1036,7 @@ Model {
 		  BlockType		  Inport
 		  Name			  "In2"
 		  SID			  "29"
-		  Position		  [80, 393, 110, 407]
+		  Position		  [150, 383, 180, 397]
 		  ZOrder		  -1
 		  Port			  "2"
 		  IconDisplay		  "Port number"
@@ -1053,7 +1046,7 @@ Model {
 		  Name			  "Data Store\nWrite"
 		  SID			  "39"
 		  Ports			  [1]
-		  Position		  [220, 385, 250, 415]
+		  Position		  [290, 375, 320, 405]
 		  ZOrder		  -6
 		  DataStoreName		  "C"
 		}
@@ -1062,7 +1055,7 @@ Model {
 		  Name			  "Subsystem"
 		  SID			  "33"
 		  Ports			  [1, 4]
-		  Position		  [180, 124, 290, 326]
+		  Position		  [250, 114, 360, 316]
 		  ZOrder		  -17
 		  MinAlgLoopOccurrences	  off
 		  PropExecContextOutsideSubsystem off
@@ -1073,8 +1066,8 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "Subsystem"
-		    Location		    [236, 239, 886, 700]
-		    Open		    off
+		    Location		    [486, 232, 1433, 857]
+		    Open		    on
 		    ModelBrowserVisibility  off
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -1090,7 +1083,7 @@ Model {
 		    BlockType		    Inport
 		    Name		    "In1"
 		    SID			    "34"
-		    Position		    [105, 68, 135, 82]
+		    Position		    [110, 68, 140, 82]
 		    ZOrder		    -1
 		    IconDisplay		    "Port number"
 		    }
@@ -1099,7 +1092,7 @@ Model {
 		    Name		    "Data Store\nRead"
 		    SID			    "42"
 		    Ports		    [0, 1]
-		    Position		    [105, 130, 135, 160]
+		    Position		    [110, 130, 140, 160]
 		    ZOrder		    -5
 		    }
 		    Block {
@@ -1107,7 +1100,7 @@ Model {
 		    Name		    "Data Store\nRead1"
 		    SID			    "43"
 		    Ports		    [0, 1]
-		    Position		    [105, 210, 135, 240]
+		    Position		    [110, 210, 140, 240]
 		    ZOrder		    -5
 		    DataStoreName	    "B"
 		    }
@@ -1116,7 +1109,7 @@ Model {
 		    Name		    "Data Store\nRead2"
 		    SID			    "44"
 		    Ports		    [0, 1]
-		    Position		    [105, 290, 135, 320]
+		    Position		    [110, 290, 140, 320]
 		    ZOrder		    -5
 		    DataStoreName	    "C"
 		    }
@@ -1124,7 +1117,7 @@ Model {
 		    BlockType		    Outport
 		    Name		    "Out1"
 		    SID			    "35"
-		    Position		    [355, 68, 385, 82]
+		    Position		    [360, 68, 390, 82]
 		    ZOrder		    -2
 		    IconDisplay		    "Port number"
 		    }
@@ -1132,7 +1125,7 @@ Model {
 		    BlockType		    Outport
 		    Name		    "Out2"
 		    SID			    "36"
-		    Position		    [355, 138, 385, 152]
+		    Position		    [360, 138, 390, 152]
 		    ZOrder		    -2
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -1141,7 +1134,7 @@ Model {
 		    BlockType		    Outport
 		    Name		    "Out3"
 		    SID			    "37"
-		    Position		    [355, 218, 385, 232]
+		    Position		    [360, 218, 390, 232]
 		    ZOrder		    -2
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -1150,7 +1143,7 @@ Model {
 		    BlockType		    Outport
 		    Name		    "Out4"
 		    SID			    "38"
-		    Position		    [355, 298, 385, 312]
+		    Position		    [360, 298, 390, 312]
 		    ZOrder		    -2
 		    Port		    "4"
 		    IconDisplay		    "Port number"
@@ -1185,7 +1178,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "Out1"
 		  SID			  "28"
-		  Position		  [345, 143, 375, 157]
+		  Position		  [415, 133, 445, 147]
 		  ZOrder		  -2
 		  IconDisplay		  "Port number"
 		}
@@ -1193,7 +1186,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "Out2"
 		  SID			  "30"
-		  Position		  [345, 193, 375, 207]
+		  Position		  [415, 183, 445, 197]
 		  ZOrder		  -2
 		  Port			  "2"
 		  IconDisplay		  "Port number"
@@ -1202,7 +1195,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "Out3"
 		  SID			  "31"
-		  Position		  [345, 243, 375, 257]
+		  Position		  [415, 233, 445, 247]
 		  ZOrder		  -2
 		  Port			  "3"
 		  IconDisplay		  "Port number"
@@ -1211,7 +1204,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "Out4"
 		  SID			  "32"
-		  Position		  [345, 293, 375, 307]
+		  Position		  [415, 283, 445, 297]
 		  ZOrder		  -2
 		  Port			  "4"
 		  IconDisplay		  "Port number"
@@ -1259,7 +1252,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      "17"
-	      Position		      [350, 148, 380, 162]
+	      Position		      [440, 128, 470, 142]
 	      ZOrder		      -2
 	      IconDisplay	      "Port number"
 	    }
@@ -1267,7 +1260,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Out2"
 	      SID		      "19"
-	      Position		      [350, 203, 380, 217]
+	      Position		      [440, 183, 470, 197]
 	      ZOrder		      -2
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -1276,7 +1269,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Out3"
 	      SID		      "21"
-	      Position		      [350, 258, 380, 272]
+	      Position		      [440, 238, 470, 252]
 	      ZOrder		      -2
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -1285,7 +1278,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Out4"
 	      SID		      "23"
-	      Position		      [350, 313, 380, 327]
+	      Position		      [440, 293, 470, 307]
 	      ZOrder		      -2
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -1338,7 +1331,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Out1"
 	  SID			  "7"
-	  Position		  [380, 163, 410, 177]
+	  Position		  [470, 148, 500, 162]
 	  ZOrder		  -2
 	  IconDisplay		  "Port number"
 	}
@@ -1346,7 +1339,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Out2"
 	  SID			  "9"
-	  Position		  [380, 218, 410, 232]
+	  Position		  [470, 203, 500, 217]
 	  ZOrder		  -2
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1355,7 +1348,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Out3"
 	  SID			  "11"
-	  Position		  [380, 273, 410, 287]
+	  Position		  [470, 258, 500, 272]
 	  ZOrder		  -2
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1364,7 +1357,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Out4"
 	  SID			  "14"
-	  Position		  [380, 328, 410, 342]
+	  Position		  [470, 313, 500, 327]
 	  ZOrder		  -2
 	  Port			  "4"
 	  IconDisplay		  "Port number"
