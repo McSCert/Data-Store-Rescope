@@ -83,8 +83,10 @@ function dataStoreRescope(model, dontmove)
         currentLowerBound=[];
         pushDownOnly=false;
         memsAboveLevels={};
+        otherMemLevels={};
         
-        %get bounds on the scope of the data store
+        % Get bounds on which data store memory blocks already cover which
+        % scopes
         for j=1:length(memsWithSameName)
             otherMemLevel=get_param(memsWithSameName{j}, 'parent');
             otherMemSplit=regexp(otherMemLevel, '/', 'split');
@@ -98,6 +100,7 @@ function dataStoreRescope(model, dontmove)
                     currentLowerBound=otherMemLevel;
                 end
             else
+                otherMemLevels{end+1}=otherMemLevel;
                 pushDownOnly=true;
             end
         end
@@ -105,13 +108,29 @@ function dataStoreRescope(model, dontmove)
         
         % Get a list of data store read and write blocks
 		dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
-		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem{i});
+		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
 
 		% Find the lowest common ancestor of the data store read and write blocks.
         % Start by assuming the first data store read block is the lowest
-        % common ancestor
+        % common ancestor, and check if that block is in the scope of the
+        % current data store memory block. Then, iterate until you find a
+        % correct data store read/write.
         try
-            lowestCommonAncestor = get_param(dataStoreReadWrite{1}, 'parent');
+            flag=true;
+            k=1;
+            while flag
+                flag=false;
+                readWriteLevel=get_param(dataStoreReadWrite{k}, 'parent');
+                if pushDownOnly
+                    readWriteLevelSplit=regexp(readWriteLevel, '/', 'split');
+                    inter=intersect(readWriteLevelSplit, memSplit);
+                    if length(inter)~=length(memSplit)
+                        flag=true;
+                    end
+                end
+                lowestCommonAncestor = readWriteLevel;
+                k=k+1;
+            end
         catch E
             % If the data store memory has no associated reads or writes, 
             % its lowest common ancestor is set as its own location
@@ -135,7 +154,9 @@ function dataStoreRescope(model, dontmove)
             % If there's a data store memory block higher than the current
             % one in the subsystem hierarchy that shares a DataStoreName,
             % don't consider blocks that could be in that data store's
-            % scope
+            % scope. Additionally, if there are reads/writes in the scope
+            % of another data store memory on another branch of the
+            % hierarchy, don't consider those.
             if pushDownOnly
                 inter=intersect(dataStoreLevelSplit, memSplit);
                 if length(inter)~=length(memSplit)
@@ -147,8 +168,22 @@ function dataStoreRescope(model, dontmove)
                             flag=false;
                         end
                     end
+                    for k=1:length(otherMemLevels)
+                        otherMemSplit=regexp(otherMemLevels{k}, '/', 'split');
+                        inter=intersect(otherMemSplit, dataStoreLevelSplit);
+                        if length(inter)==length(otherMemSplit)
+                            flag=false;
+                        end
+                    end
                     if flag
-                        warning('placeholder');
+                        warnstr=['Warning: The block ''%s'' is out of ' ...
+                            'scope of all Data Store Memory blocks with ' ...
+                            '''DataStoreName'' parameter ''%s''. Since ' ...
+                            'multiple Data Store Memory blocks with name '...
+                            '''%s'' exist, it is non-deterministic which ' ...
+                            'Data Store Memory block should be rescoped to ' ...
+                            'fix the issue.'];
+                        disp(sprintf(warnstr, dataStoreReadWrite{j}, dataStoreName, dataStoreName));
                     end
                     continue
                 end
