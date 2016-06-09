@@ -74,6 +74,18 @@ function dataStoreRescope(model, dontMove)
 		% Get initial location, name of the data store
 		initialLocation = get_param(dataStoreMem{i}, 'parent');
         
+        % Ensure that found Data Store Memory block isn't in a linked
+        % subsystem
+        try
+            isRef = get_param(initialLocation, 'ReferenceBlock');
+        catch
+            isRef = '';
+        end
+        
+        if ~isempty(isRef)
+            continue
+        end
+        
         % Get other Data Store Memory blocks that share the same name
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
         memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
