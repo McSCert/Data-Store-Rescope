@@ -1,4 +1,4 @@
-function dataStoreRescope(model, dontmove)
+function dataStoreRescope(model, dontMove)
 % DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper 
 % scopes.
 %
@@ -42,7 +42,7 @@ function dataStoreRescope(model, dontmove)
     
     % Check that D is of type 'cell'
     try
-        assert(iscell(dontmove));
+        assert(iscell(dontMove));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Invalid cell argument D.' char(10)])
@@ -61,78 +61,77 @@ function dataStoreRescope(model, dontmove)
 
 	% Remove data stores that are listed to not be rescoped from the list of data stores to examine
 	for j = 1:length(dataStoreMem)
-		for k = 1:length(dontmove)
-			if strcmp(get_param(dataStoreMem{j}, 'DataStoreName'), get_param(dontmove{k}, 'DataStoreName'))
+		for k = 1:length(dontMove)
+			if strcmp(get_param(dataStoreMem{j}, 'DataStoreName'), get_param(dontMove{k}, 'DataStoreName'))
 				dataStoresToIgnore = [dataStoresToIgnore dataStoreMem{j}];
 			end
 		end
 	end
 	dataStoreMem = setdiff(dataStoreMem, dataStoresToIgnore);
 
-	% Main loop for finding the data store memory blocks to be rescoped, and their updated locations
+	% Main loop for finding the Data Store Memory blocks to be rescoped, and their updated locations
 	for i = 1:length(dataStoreMem)
 		% Get initial location, name of the data store
 		initialLocation = get_param(dataStoreMem{i}, 'parent');
         
-        % Get other data store memory blocks that share the same name
+        % Get other Data Store Memory blocks that share the same name
 		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
-        memsWithSameName=find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
-        memsWithSameName=setdiff(memsWithSameName, dataStoreMem{i});
+        memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
+        memsWithSameName = setdiff(memsWithSameName, dataStoreMem{i});
         
-        memSplit=regexp(initialLocation, '/', 'split');
-        currentLowerBound=[];
-        pushDownOnly=false;
-        memsAboveLevels={};
-        otherMemLevels={};
+        memSplit = regexp(initialLocation, '/', 'split');
+        currentLowerBound = [];
+        pushDownOnly = false;
+        memsAboveLevels = {};
+        otherMemLevels = {};
         
-        % Get bounds on which data store memory blocks already cover which
+        % Get bounds on which Data Store Memory blocks already cover which
         % scopes
-        for j=1:length(memsWithSameName)
-            otherMemLevel=get_param(memsWithSameName{j}, 'parent');
-            otherMemSplit=regexp(otherMemLevel, '/', 'split');
-            inter=intersect(otherMemSplit, memSplit);
-            if length(inter)==length(otherMemLevel)
-                pushDownOnly=true;
-                memsAboveLevels{end+1}=otherMemLevel;
-            elseif length(inter)==length(memSplit)
-                if length(otherMemLevel)<length(currentLowerBound)|| ...
+        for j = 1:length(memsWithSameName)
+            otherMemLevel = get_param(memsWithSameName{j}, 'parent');
+            otherMemSplit = regexp(otherMemLevel, '/', 'split');
+            inter = intersect(otherMemSplit, memSplit);
+            if length(inter) == length(otherMemLevel)
+                pushDownOnly = true;
+                memsAboveLevels{end+1} = otherMemLevel;
+            elseif length(inter) == length(memSplit)
+                if length(otherMemLevel) < length(currentLowerBound)|| ...
                         isempty(currentLowerBound)
-                    currentLowerBound=otherMemLevel;
+                    currentLowerBound = otherMemLevel;
                 end
             else
-                otherMemLevels{end+1}=otherMemLevel;
-                pushDownOnly=true;
+                otherMemLevels{end+1} = otherMemLevel;
+                pushDownOnly = true;
             end
         end
         
-        
-        % Get a list of data store read and write blocks
+        % Get list of all Data Store Read and Write blocks
 		dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
 		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
 
-		% Find the lowest common ancestor of the data store read and write blocks.
-        % Start by assuming the first data store read block is the lowest
+		% Find the lowest common ancestor of the Data Store Read and Write blocks.
+        % Start by assuming the first Data Store Read/Write block is the lowest
         % common ancestor, and check if that block is in the scope of the
-        % current data store memory block. Then, iterate until you find a
-        % correct data store read/write.
+        % current Data Store Memory block. Then, iterate until you find a
+        % correct Data Store Read/Write.
         try
-            flag=true;
-            k=1;
+            flag = true;
+            k = 1;
             while flag
-                flag=false;
-                readWriteLevel=get_param(dataStoreReadWrite{k}, 'parent');
+                flag = false;
+                readWriteLevel = get_param(dataStoreReadWrite{k}, 'parent');
                 if pushDownOnly
-                    readWriteLevelSplit=regexp(readWriteLevel, '/', 'split');
-                    inter=intersect(readWriteLevelSplit, memSplit);
-                    if length(inter)~=length(memSplit)
-                        flag=true;
+                    readWriteLevelSplit = regexp(readWriteLevel, '/', 'split');
+                    inter = intersect(readWriteLevelSplit, memSplit);
+                    if length(inter) ~= length(memSplit)
+                        flag = true;
                     end
                 end
                 lowestCommonAncestor = readWriteLevel;
-                k=k+1;
+                k = k + 1;
             end
         catch E
-            % If the data store memory has no associated reads or writes, 
+            % If a Data Store Memory has no associated Reads/Writes, 
             % its lowest common ancestor is set as its own location
             if strcmp(E.identifier, 'MATLAB:badsubscript')
                 lowestCommonAncestor = initialLocation;
@@ -145,76 +144,79 @@ function dataStoreRescope(model, dontmove)
             % store block name into substrings for each subsystem in the block path
 			LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
 			dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
-            dataStoreLevel=get_param(dataStoreReadWrite{j}, 'parent');
-            dataStoreLevelSplit=regexp(dataStoreLevel, '/', 'split');
+            dataStoreLevel = get_param(dataStoreReadWrite{j}, 'parent');
+            dataStoreLevelSplit = regexp(dataStoreLevel, '/', 'split');
             
-            % Check if the data store read/write is in the scope of this
+            % Check if the Data Store Read/Write is in the scope of this
             % particular data store
             
-            % If there's a data store memory block higher than the current
+            % If there's a Data Store Memory block higher than the current
             % one in the subsystem hierarchy that shares a DataStoreName,
             % don't consider blocks that could be in that data store's
-            % scope. Additionally, if there are reads/writes in the scope
-            % of another data store memory on another branch of the
-            % hierarchy, don't consider those.
+            % scope. Additionally, if there are Reads/Writes in the scope
+            % of another Data Store Memory on another branch of the
+            % hierarchy, don't consider those
             if pushDownOnly
-                inter=intersect(dataStoreLevelSplit, memSplit);
-                if length(inter)~=length(memSplit)
-                    flag=true;
-                    for k=1:length(memsAboveLevels)
-                        memsAboveSplit=regexp(memsAboveLevels{k}, '/', 'split');
-                        inter=intersect(memsAboveSplit, dataStoreLevelSplit);
-                        if length(inter)==length(memsAboveSplit)
-                            flag=false;
+                inter = intersect(dataStoreLevelSplit, memSplit);
+                if length(inter) ~= length(memSplit)
+                    flag = true;
+                    for k = 1:length(memsAboveLevels)
+                        memsAboveSplit = regexp(memsAboveLevels{k}, '/', 'split');
+                        inter = intersect(memsAboveSplit, dataStoreLevelSplit);
+                        if length(inter) == length(memsAboveSplit)
+                            flag = false;
                         end
                     end
-                    for k=1:length(otherMemLevels)
-                        otherMemSplit=regexp(otherMemLevels{k}, '/', 'split');
-                        inter=intersect(otherMemSplit, dataStoreLevelSplit);
-                        if length(inter)==length(otherMemSplit)
-                            flag=false;
+                    for k = 1:length(otherMemLevels)
+                        otherMemSplit = regexp(otherMemLevels{k}, '/', 'split');
+                        inter = intersect(otherMemSplit, dataStoreLevelSplit);
+                        if length(inter) == length(otherMemSplit)
+                            flag = false;
                         end
                     end
                     if flag
-                        warnstr=['Warning: The block ''%s'' is out of ' ...
-                            'scope of all Data Store Memory blocks with ' ...
-                            '''DataStoreName'' parameter ''%s''. Since ' ...
-                            'multiple Data Store Memory blocks with name '...
-                            '''%s'' exist, it is non-deterministic which ' ...
-                            'Data Store Memory block should be rescoped to ' ...
-                            'fix the issue.'];
-                        disp(sprintf(warnstr, dataStoreReadWrite{j}, dataStoreName, dataStoreName));
+                        % Display names containing newlines with spaces instead
+                        danglingName = dataStoreReadWrite{j};
+                        danglingName(danglingName == char(10)) = ' ';
+                                
+                        disp(['Warning using ' mfilename ':' char(10) ...
+                        '"' danglingName '" is out of scope of any Data Store Memory blocks '...
+                        'with DataStoreName "' dataStoreName '".']);
+                    
+                        disp([' Due to multiple matching Data Store Memory blocks in the model with this DataStoreName, ' ...
+                        'it cannot be determined which is to ne used.']);
+                    
+                        disp([' Please choose one, move it to the root, and run this operation again.']);
                     end
                     continue
                 end
             end
             
-            % If there's a data store memory block lower than the current
+            % If there's a Data Store Memory block lower than the current
             % one in the subsystem hierarchy that shares a DataStoreName,
-            % don't consider blocks in that data store memory's scope
+            % don't consider blocks in that Data Store Memory's scope
             if ~isempty(currentLowerBound)
-                inter=intersect(dataStoreLevelSplit, currentLowerBound);
-                if length(inter)==length(currentLowerBound)
+                inter = intersect(dataStoreLevelSplit, currentLowerBound);
+                if length(inter) == length(currentLowerBound)
                     continue
                 end
             end
                       
-            % Initialize variables for the lowest common ancestor while loop
-			flag = 1;
+			% Find the lowest common ancestor based on the block paths
+			% between current lowest common ancestor and the current block
+            flag = true;
 			lowestCommonAncestor = '';
             k = 1;
             
-			% Find the lowest common ancestor based on the block paths
-			% between current lowest common ancestor and the current block
-			while (flag == 1)
+            while flag
                 try
                     if strcmp(LCASubstrings{k}, dataStoreSubstrings{k})
                         lowestCommonAncestor = [lowestCommonAncestor LCASubstrings{k} '/'];
                     else
-                        flag = 0;
+                        flag = false;
                     end
                 catch
-                    flag = 0;
+                    flag = false;
                 end
                 k = k + 1;
             end
@@ -224,10 +226,9 @@ function dataStoreRescope(model, dontmove)
 		end
 
 		% Check if lowest common ancestor is in a referenced subsystem
-		% (library subsystem) where data store memory blocks shouldn't be
+		% (library subsystem) where Data Store Memory blocks shouldn't be
 		% rescoped
 		notRef = false;
-
 		while ~notRef
             % Check if lowest common ancestor is in a referenced subsystem
 			try
@@ -248,19 +249,19 @@ function dataStoreRescope(model, dontmove)
 			end
 		end
 
-		% Check if data store memory lowest common ancestor is in the same
+		% Check if Data Store Memory lowest common ancestor is in the same
 		% system as started. If it is, the block should not be rescoped
-		dontmove = false;
+		dontMove = false;
 		if strcmp(lowestCommonAncestor, initialLocation)
-			dontmove = true;
+			dontMove = true;
 		end
 
-		% Note the block to push, its current location, and the address for
+		% Note the block to rescope, its current location, and the address for
 		% which the block is to be rescoped
-		if (~dontmove)
-			memToRescope{end+1}= dataStoreMem{i};
-			initialAddress{end+1}= initialLocation;
-			toRescopeAddress{end+1}= lowestCommonAncestor;
+		if ~dontMove
+			memToRescope{end+1} = dataStoreMem{i};
+			initialAddress{end+1} = initialLocation;
+			toRescopeAddress{end+1} = lowestCommonAncestor;
 		end
 	end
 
@@ -276,9 +277,9 @@ function dataStoreRescope(model, dontmove)
 		temp = addressMap(toRescopeAddress{i});
 		temp{end+1} = memToRescope{i};
 		addressMap(toRescopeAddress{i}) = temp;
-    end
+	end
 
-	% Iterate through each address where data store memory blocks are being 
+	% Iterate through each address where Data Store Memory blocks are being 
 	% rescoped, and move the blocks to their corresponding address
 	allKeys = keys(addressMap);
 	for i = 1:length(allKeys)
@@ -323,14 +324,14 @@ function dataStoreRescope(model, dontmove)
 		 	set_param(annotations(gg), 'Position', bPosition);
         end
         
-        % Get the list of Data Stores being rescoped to this address
+        % Get the list of Data Stores Memory blocks being rescoped to this address
 		DSCell = addressMap(allKeys{i});
         
         % For each Data Store in the list
         for DSM = 1:numDS
             % Get the parameters for its position
             if (ceil(DSM/10) > 1)
-                top = 30+50*(ceil(DSM/10)-1);
+                top = 30 + 50 * (ceil(DSM/10) - 1);
                 if (mod(DSM, 10) == 1)
                     start = 30;
                 end
@@ -339,32 +340,32 @@ function dataStoreRescope(model, dontmove)
             % Get parameters for the new block
             name = get_param(DSCell{DSM}, 'Name');
             
-            % Create new pushed data store memory block. If a block with
-            % 'Name' parameter already exists, add a number to suffix it.
+            % Create new rescoped Data Store Memory block. If a block with
+            % 'Name' parameter already exists, add a number suffix
             flag = true;
             n = 1;
             oldName = name;
             while flag
                 try
+                    % Try adding the block in new location
                     rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' name]);
                     flag = false;
                 catch E
                     if strcmp(E.identifier, 'Simulink:Commands:AddBlockCantAdd')
-                        endnum=regexp(oldName, '[1-9]+$', 'match');
-                        if isempty(endnum)
-                            name = [oldName ' ' num2str(n)];
+                        endNum = regexp(oldName, '[1-9]+$', 'match');
+                        if isempty(endNum)
+                            name = [oldName num2str(n)];
                             n = n + 1;
                         else
-                            name=oldName(1:end-length(endnum{1}));
-                            name = [name ' ' num2str(n+str2num(endnum{1}))];
+                            name = oldName(1:end-length(endNum{1}));
+                            name = [name num2str(n + str2num(endNum{1}))];
                             n = n + 1;
                         end
                     end
                 end
             end
             
-            % Display warning message if 'Name' parameter of a pushed block
-            % was changed
+            % Notify user if 'Name' parameter of a rescoped block was changed
             if ~strcmp(oldName, name)
                % Display names containing newlines with spaces instead
                oldName(oldName == char(10)) = ' ';
@@ -378,7 +379,7 @@ function dataStoreRescope(model, dontmove)
             % Remove old block
             delete_block(DSCell{DSM});
             
-            % Adjust position of the newly rescoped DataStoreMemory block
+            % Adjust position of the newly rescoped Data Store Memory block
             rsDSMemPos = get_param(rescopedDSMem, 'Position');
             newPos(1) = start;
             newPos(2) = top;
@@ -392,5 +393,4 @@ function dataStoreRescope(model, dontmove)
     
     % Create logfile to document the operation
     rescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
-
 end
