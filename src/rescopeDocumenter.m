@@ -87,5 +87,9 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
             fprintf(file, 'New Location: %s\n\n', rescopeAddresses{doc});
         end
     end
+    
+    if isempty(rescopedBlocks)
+        fprintf(file, 'N/A\n\n');
+    end
     fclose(file);
 end
