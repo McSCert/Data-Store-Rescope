@@ -18,7 +18,7 @@ function dataStoreRescope(model, dontMove)
         assert(bdIsLoaded(model));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
-            'Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
+            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
         help(mfilename)
         return
     end
@@ -34,7 +34,7 @@ function dataStoreRescope(model, dontMove)
             return
         else
             disp(['Error using ' mfilename ':' char(10) ...
-                'Invalid model name argument M.' char(10)])
+                ' Invalid model name argument M.' char(10)])
             help(mfilename)
             return
         end
