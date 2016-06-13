@@ -1,7 +1,7 @@
 function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, model)
-% RESCOPEDOCUMENTER Create a logfile of the dataStoreResope operation.
+% RESCOPEDOCUMENTER Create a log file of the dataStoreResope operation.
 %
-%   RESCOPEDOCUMENTER(DSM, A1, A2, M) creates a text logfile summarizing 
+%   RESCOPEDOCUMENTER(DSM, A1, A2, M) creates a text log file summarizing 
 %   the effect of the dataStoreRecope operation, where,
 %       DSM is a list of rescoped Data Store Memory block paths
 %       A1 is a list of initial addresses of DSM
@@ -59,8 +59,8 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     total = length(find_system(model, 'BlockType', 'DataStoreMemory'));
     numRescoped = length(rescopedBlocks);
     
-    % Open logfile
-    modelpath=which(model);
+    % Open log file
+    modelpath = which(model);
     
     if isunix
         filename = [fileparts(modelpath) '/' model '_RescopeLog.txt'];
@@ -79,10 +79,14 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     fprintf(file, 'Percentage of Data Store Memory blocks rescoped: %d%%\n\n', round((numRescoped/total)*100));
     fprintf(file, 'List of rescoped Data Store Memory blocks:\n\n');
 
-    % Print the change in addesses for each rescoped block 
+    % Print the change in addresses for each rescoped block 
     for doc = 1:length(rescopedBlocks)
         if ~strcmp(initialAddresses{doc}, rescopeAddresses{doc})
-            fprintf(file, 'Block Name: %s\n', rescopedBlocks{doc});
+                       
+            % Display name containing newlines with spaces instead
+            blockName = rescopedBlocks{doc};
+            blockName(blockName == char(10)) = ' ';
+            fprintf(file, 'Block Name: %s\n', blockName);
             fprintf(file, 'Initial Location: %s\n', initialAddresses{doc});
             fprintf(file, 'New Location: %s\n\n', rescopeAddresses{doc});
         end
@@ -91,5 +95,6 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     if isempty(rescopedBlocks)
         fprintf(file, 'N/A\n\n');
     end
+    fprintf(file, '-----------------------------------\n\n');
     fclose(file);
 end
