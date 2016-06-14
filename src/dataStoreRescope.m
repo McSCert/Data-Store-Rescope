@@ -59,22 +59,25 @@ function dataStoreRescope(model, dontMove)
     memToRescope = {};
     toRescopeAddress = {};
     initialAddress = {};
+    
+    % Checks if blocks in dontMove exist and are data stores
+    for i=1:length(dontMove)
+        try
+            get_param(dontMove{i}, 'DataStoreName')
+        catch E
+            if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
+                disp(['Warning using ' mfilename ': ' char(10) ...
+                    ' Block "' dontMove{i} '" does not exist.'])
+            elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
+                disp(['Warning using ' mfilename ': ' char(10) ...
+                    ' Block "' dontMove{i} '" is not a Data Store Memory block.'])
+            end
+        end
+    end
 
     % Remove data stores that are listed to not be rescoped from the list of data stores to examine
     for j = 1:length(dataStoreMem)
         for k = 1:length(dontMove)
-            % Checks if blocks in dontMove exist and are data stores
-            try
-                get_param(dontMove{k}, 'DataStoreName')
-            catch E
-                if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
-                    disp(['Warning using ' mfilename ': ' char(10) ...
-                        ' Block "' dontMove{k} '" does not exist.'])
-                elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
-                    disp(['Warning using ' mfilename ': ' char(10) ...
-                        ' Block "' dontMove{k} '" is not a Data Store Memory block.'])
-                end
-            end
             if strcmp(dataStoreMem{j}, dontMove{k})
                 dataStoresToIgnore = [dataStoresToIgnore dataStoreMem{j}];
             end
