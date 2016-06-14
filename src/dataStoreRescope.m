@@ -15,6 +15,7 @@ function dataStoreRescope(model, dontMove)
     % Check model argument M
     % 1) Ensure the model is open
     try
+        assert(ischar(model));
         assert(bdIsLoaded(model));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
