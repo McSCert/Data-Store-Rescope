@@ -68,9 +68,11 @@ function dataStoreRescope(model, dontMove)
                 get_param(dontMove{k}, 'DataStoreName')
             catch E
                 if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
-                    disp(['Warning: Block ' dontMove{k} 'does not exist.'])
+                    disp(['Warning using ' mfilename ': ' char(10) ...
+                        ' Block "' dontMove{k} '" does not exist.'])
                 elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
-                    disp(['Warning: Block ' dontMove{k} 'is not a data store block.'])
+                    disp(['Warning using ' mfilename ': ' char(10) ...
+                        ' Block "' dontMove{k} '" is not a Data Store Memory block.'])
                 end
             end
             if strcmp(dataStoreMem{j}, dontMove{k})
