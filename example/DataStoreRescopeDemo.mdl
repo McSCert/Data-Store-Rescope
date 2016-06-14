@@ -42,7 +42,7 @@ Model {
       Name		      "Out4"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.20"
+    ComputedModelVersion    "1.21"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -61,11 +61,11 @@ Model {
   Creator		  "Ben"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "T6684MB"
+  LastModifiedBy	  "monika"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jun 08 13:16:17 2016"
-  RTWModifiedTimeStamp	  387292576
-  ModelVersionFormat	  "1.%<AutoIncrement:20>"
+  LastModifiedDate	  "Tue Jun 14 16:27:21 2016"
+  RTWModifiedTimeStamp	  387822440
+  ModelVersionFormat	  "1.%<AutoIncrement:21>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -103,6 +103,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "pushdownDemo"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -646,6 +647,13 @@ Model {
 	  Version		  "1.11.1"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
+	  Array {
+	    Type		    "Cell"
+	    Dimension		    1
+	    Cell		    ""
+	    PropName		    "HDLConfigFile"
+	  }
+	  HDLCActiveTab		  "0"
 	}
 	PropName		"Components"
       }
@@ -786,7 +794,7 @@ Model {
   }
   System {
     Name		    "DataStoreRescopeDemo"
-    Location		    [490, 239, 1427, 856]
+    Location		    [795, 196, 1732, 813]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -883,7 +891,7 @@ Model {
       System {
 	Name			"Subsystem"
 	Location		[491, 240, 1427, 855]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -948,7 +956,7 @@ Model {
 	  System {
 	    Name		    "Subsystem"
 	    Location		    [489, 237, 1428, 853]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1012,7 +1020,7 @@ Model {
 	      System {
 		Name			"Subsystem"
 		Location		[488, 234, 1428, 856]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -1067,7 +1075,7 @@ Model {
 		  System {
 		    Name		    "Subsystem"
 		    Location		    [486, 232, 1433, 857]
-		    Open		    on
+		    Open		    off
 		    ModelBrowserVisibility  off
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"

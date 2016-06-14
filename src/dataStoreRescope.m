@@ -12,8 +12,8 @@ function dataStoreRescope(model, dontMove)
 %   dataStoreRescope(bdroot, {})    % rescope all Data Store Memory blocks
 %                                   % in the current Simulink system
 %
-%   dataStoreRescope('model4', {})    % rescope all Data Store Memory blocks
-%                                   % in the current Simulink system
+%   dataStoreRescope('DataStoreRescopeDemo', {'DataStoreRescopeDemo/Data Store Memory 1'})    % rescope all Data Store Memory blocks
+%                                                                                             % except for Data Store Memory 1
     % Check model argument M
     % 1) Ensure the model is open
     try
