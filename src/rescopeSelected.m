@@ -44,7 +44,7 @@ function rescopeSelected(model, dataStores)
 
     % Check that D is of type 'cell'
     try
-        assert(iscell(dontMove));
+        assert(iscell(dataStores));
     catch
         disp(['Error using ' mfilename ':' char(10) ...
                 ' Invalid cell argument D.' char(10)])
