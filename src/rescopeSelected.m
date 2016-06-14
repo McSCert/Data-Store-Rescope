@@ -59,7 +59,9 @@ function rescopeSelected(model, dataStores)
         if ~strcmp(blockType, 'DataStoreMemory')
             % If not, find corresponding DataStoreMemory block before adding
             temp = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
-            toRescope{end + 1} = temp{1};
+            if ~isempty(temp)
+                toRescope{end + 1} = temp{1};
+            end
         else
             toRescope{end + 1} = dataStores{i};
         end

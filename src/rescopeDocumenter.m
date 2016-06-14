@@ -76,7 +76,11 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     % Print overall statistics for the whole model
     fprintf(file, 'Total number of Data Store Memory blocks in model: %d\n', total);
     fprintf(file, 'Total number of Data Store Memory blocks rescoped: %d\n', numRescoped);
-    fprintf(file, 'Percentage of Data Store Memory blocks rescoped: %d%%\n\n', round((numRescoped/total)*100));
+    if (total~=0)
+        fprintf(file, 'Percentage of Data Store Memory blocks rescoped: %d%%\n\n', round((numRescoped/total)*100));
+    else
+        fprintf(file, 'Percentage of Data Store Memory blocks rescoped: N/A\n\n');
+    end
     fprintf(file, 'List of rescoped Data Store Memory blocks:\n\n');
 
     % Print the change in addresses for each rescoped block 
