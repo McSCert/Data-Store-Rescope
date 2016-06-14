@@ -4,13 +4,13 @@ function dataStoreRescope(model, dontMove)
 %
 %   DATASTORERESCOPE(M, D) moves all Data Store Memory blocks in model M to
 %    their proper scopes, except for those in D, where:
-%		M is the Simulink model name (or top-level system name)
-%		D is a cell array of Data Store Memory block path names
+%       M is the Simulink model name (or top-level system name)
+%       D is a cell array of Data Store Memory block path names
 %
-%	Example:
-%	
-%	dataStoreRescope(bdroot, {})	% rescope all Data Store Memory blocks
-%									% in the current Simulink system
+%   Example:
+%   
+%   dataStoreRescope(bdroot, {})    % rescope all Data Store Memory blocks
+%                                   % in the current Simulink system
 
     % Check model argument M
     % 1) Ensure the model is open
@@ -50,29 +50,29 @@ function dataStoreRescope(model, dontMove)
         return
     end
     
-	% Find all Data Store Memory blocks in the model
-	dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
+    % Find all Data Store Memory blocks in the model
+    dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
 
-	% Initial declarations
-	dataStoresToIgnore = {};
-	memToRescope = {};
-	toRescopeAddress = {};
-	initialAddress = {};
+    % Initial declarations
+    dataStoresToIgnore = {};
+    memToRescope = {};
+    toRescopeAddress = {};
+    initialAddress = {};
 
-	% Remove data stores that are listed to not be rescoped from the list of data stores to examine
-	for j = 1:length(dataStoreMem)
-		for k = 1:length(dontMove)
-			if strcmp(get_param(dataStoreMem{j}, 'DataStoreName'), get_param(dontMove{k}, 'DataStoreName'))
-				dataStoresToIgnore = [dataStoresToIgnore dataStoreMem{j}];
-			end
-		end
-	end
-	dataStoreMem = setdiff(dataStoreMem, dataStoresToIgnore);
+    % Remove data stores that are listed to not be rescoped from the list of data stores to examine
+    for j = 1:length(dataStoreMem)
+        for k = 1:length(dontMove)
+            if strcmp(get_param(dataStoreMem{j}, 'DataStoreName'), get_param(dontMove{k}, 'DataStoreName'))
+                dataStoresToIgnore = [dataStoresToIgnore dataStoreMem{j}];
+            end
+        end
+    end
+    dataStoreMem = setdiff(dataStoreMem, dataStoresToIgnore);
 
-	% Main loop for finding the Data Store Memory blocks to be rescoped, and their updated locations
-	for i = 1:length(dataStoreMem)
-		% Get initial location, name of the data store
-		initialLocation = get_param(dataStoreMem{i}, 'parent');
+    % Main loop for finding the Data Store Memory blocks to be rescoped, and their updated locations
+    for i = 1:length(dataStoreMem)
+        % Get initial location, name of the data store
+        initialLocation = get_param(dataStoreMem{i}, 'parent');
         
         % Ensure that found Data Store Memory block isn't in a linked
         % subsystem
@@ -87,7 +87,7 @@ function dataStoreRescope(model, dontMove)
         end
         
         % Get other Data Store Memory blocks that share the same name
-		dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
+        dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
         memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
         memsWithSameName = setdiff(memsWithSameName, dataStoreMem{i});
         
@@ -118,10 +118,10 @@ function dataStoreRescope(model, dontMove)
         end
         
         % Get list of all Data Store Read and Write blocks
-		dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
-		dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
+        dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
+        dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
 
-		% Find the lowest common ancestor of the Data Store Read and Write blocks.
+        % Find the lowest common ancestor of the Data Store Read and Write blocks.
         % Start by assuming the first Data Store Read/Write block is the lowest
         % common ancestor, and check if that block is in the scope of the
         % current Data Store Memory block. Then, iterate until you find a
@@ -150,12 +150,12 @@ function dataStoreRescope(model, dontMove)
             end
         end
 
-		for j = 2:length(dataStoreReadWrite)
+        for j = 2:length(dataStoreReadWrite)
             
-			% Split off current lowest common ancestor name and current data
+            % Split off current lowest common ancestor name and current data
             % store block name into substrings for each subsystem in the block path
-			LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
-			dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
+            LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
+            dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
             dataStoreLevel = get_param(dataStoreReadWrite{j}, 'parent');
             dataStoreLevelSplit = regexp(dataStoreLevel, '/', 'split');
             
@@ -190,6 +190,8 @@ function dataStoreRescope(model, dontMove)
                         % Display names containing newlines with spaces instead
                         danglingName = dataStoreReadWrite{j};
                         danglingName(danglingName == char(10)) = ' ';
+                        memName = dataStoreMem{i};
+                        memName(memName == char(10)) = ' ';
                                 
                         disp(['Warning using ' mfilename ':' char(10) ...
                         '"' danglingName '" is out of scope of all Data Store Memory blocks '...
@@ -199,7 +201,7 @@ function dataStoreRescope(model, dontMove)
                         'it cannot be determined which is to be used.']);
                     
                         disp([' If the desired Data Story Memory block ' ...
-                            'is ''' dataStoreMem{i} ''', move it to the root,' ...
+                            'is "' memName '", move it to the root, ' ...
                             'and run this operation again.']);
                     end
                     continue
@@ -216,10 +218,10 @@ function dataStoreRescope(model, dontMove)
                 end
             end
                       
-			% Find the lowest common ancestor based on the block paths
-			% between current lowest common ancestor and the current block
+            % Find the lowest common ancestor based on the block paths
+            % between current lowest common ancestor and the current block
             flag = true;
-			lowestCommonAncestor = '';
+            lowestCommonAncestor = '';
             k = 1;
             
             while flag
@@ -237,109 +239,109 @@ function dataStoreRescope(model, dontMove)
             if (lowestCommonAncestor(end) == '/')
                 lowestCommonAncestor(end) = '';
             end
-		end
+        end
 
-		% Check if lowest common ancestor is in a referenced subsystem
-		% (library subsystem) where Data Store Memory blocks shouldn't be
-		% rescoped
-		notRef = false;
-		while ~notRef
+        % Check if lowest common ancestor is in a referenced subsystem
+        % (library subsystem) where Data Store Memory blocks shouldn't be
+        % rescoped
+        notRef = false;
+        while ~notRef
             % Check if lowest common ancestor is in a referenced subsystem
-			try
-				isRef = get_param(lowestCommonAncestor, 'ReferenceBlock');
-			catch
-				isRef = '';
-			end
-			
-			if strcmp(isRef, '')
-				notRef = true;
+            try
+                isRef = get_param(lowestCommonAncestor, 'ReferenceBlock');
+            catch
+                isRef = '';
+            end
+            
+            if strcmp(isRef, '')
+                notRef = true;
             else
                 % If the current subsystem is referenced, move up one
                 % subsytem for the lowest common ancestor
-				notRef = false;
-				LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
-				LCASubstrings(end) = [];
-				lowestCommonAncestor = strjoin(LCASubstrings, '/');
-			end
-		end
+                notRef = false;
+                LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
+                LCASubstrings(end) = [];
+                lowestCommonAncestor = strjoin(LCASubstrings, '/');
+            end
+        end
 
-		% Check if Data Store Memory lowest common ancestor is in the same
-		% system as started. If it is, the block should not be rescoped
-		dontMove = false;
-		if strcmp(lowestCommonAncestor, initialLocation)
-			dontMove = true;
-		end
+        % Check if Data Store Memory lowest common ancestor is in the same
+        % system as started. If it is, the block should not be rescoped
+        dontMove = false;
+        if strcmp(lowestCommonAncestor, initialLocation)
+            dontMove = true;
+        end
 
-		% Note the block to rescope, its current location, and the address for
-		% which the block is to be rescoped
-		if ~dontMove
-			memToRescope{end+1} = dataStoreMem{i};
-			initialAddress{end+1} = initialLocation;
-			toRescopeAddress{end+1} = lowestCommonAncestor;
-		end
-	end
+        % Note the block to rescope, its current location, and the address for
+        % which the block is to be rescoped
+        if ~dontMove
+            memToRescope{end+1} = dataStoreMem{i};
+            initialAddress{end+1} = initialLocation;
+            toRescopeAddress{end+1} = lowestCommonAncestor;
+        end
+    end
 
-	% Set up a map object with the keys being the final desinations of the objects
-	addressMap = containers.Map();
-	for i = 1:length(toRescopeAddress)
-		addressMap(toRescopeAddress{i}) = {};
-	end
+    % Set up a map object with the keys being the final desinations of the objects
+    addressMap = containers.Map();
+    for i = 1:length(toRescopeAddress)
+        addressMap(toRescopeAddress{i}) = {};
+    end
 
-	% For each block to rescope, add it to the list of blocks to be rescoped
-	% for its corresponding toRescopeAddress
-	for i = 1:length(memToRescope)
-		temp = addressMap(toRescopeAddress{i});
-		temp{end+1} = memToRescope{i};
-		addressMap(toRescopeAddress{i}) = temp;
-	end
+    % For each block to rescope, add it to the list of blocks to be rescoped
+    % for its corresponding toRescopeAddress
+    for i = 1:length(memToRescope)
+        temp = addressMap(toRescopeAddress{i});
+        temp{end+1} = memToRescope{i};
+        addressMap(toRescopeAddress{i}) = temp;
+    end
 
-	% Iterate through each address where Data Store Memory blocks are being 
-	% rescoped, and move the blocks to their corresponding address
-	allKeys = keys(addressMap);
-	for i = 1:length(allKeys)
-		% Setup for moving Data Store Memory blocks to the top of the model
-		start = 30;
-		top = 30;
-    	numDS = length(addressMap(allKeys{i}));
-		rowNum = ceil(numDS/10);
-		colNum = 10;
+    % Iterate through each address where Data Store Memory blocks are being 
+    % rescoped, and move the blocks to their corresponding address
+    allKeys = keys(addressMap);
+    for i = 1:length(allKeys)
+        % Setup for moving Data Store Memory blocks to the top of the model
+        start = 30;
+        top = 30;
+        numDS = length(addressMap(allKeys{i}));
+        rowNum = ceil(numDS/10);
+        colNum = 10;
 
-		% Move down all blocks and lines in the model
-		mdlLines = find_system(allKeys{i}, 'Searchdepth', 1, 'FollowLinks', 'on', 'LookUnderMasks', 'All', 'FindAll', 'on', 'Type', 'line');
-    	allBlocks = find_system(allKeys{i}, 'SearchDepth', 1);
-    	allBlocks = setdiff(allBlocks, allKeys{i});
-    	annotations = find_system(allKeys{i}, 'FindAll', 'on', 'SearchDepth', 1, 'type', 'annotation');
+        % Move down all blocks and lines in the model
+        mdlLines = find_system(allKeys{i}, 'Searchdepth', 1, 'FollowLinks', 'on', 'LookUnderMasks', 'All', 'FindAll', 'on', 'Type', 'line');
+        allBlocks = find_system(allKeys{i}, 'SearchDepth', 1);
+        allBlocks = setdiff(allBlocks, allKeys{i});
+        annotations = find_system(allKeys{i}, 'FindAll', 'on', 'SearchDepth', 1, 'type', 'annotation');
 
-    	% Move all lines downwards
-		for zm = 1:length(mdlLines)
-			lPint = get_param(mdlLines(zm), 'Points');
-		 	xPint = lPint(:, 1); % First position integer
-		 	yPint = lPint(:, 2); % Second position integer
-		 	yPint = yPint+50*rowNum+30;
-		 	newPoint = [xPint yPint];
-		 	set_param(mdlLines(zm), 'Points', newPoint);
-		end
+        % Move all lines downwards
+        for zm = 1:length(mdlLines)
+            lPint = get_param(mdlLines(zm), 'Points');
+            xPint = lPint(:, 1); % First position integer
+            yPint = lPint(:, 2); % Second position integer
+            yPint = yPint+50*rowNum+30;
+            newPoint = [xPint yPint];
+            set_param(mdlLines(zm), 'Points', newPoint);
+        end
 
-		% Move all blocks downwards
-		for z = 1:length(allBlocks)
-			bPosition = get_param(allBlocks{z}, 'Position'); % Block position
-			bPosition(1) = bPosition(1);
-			bPosition(2) = bPosition(2)+50*rowNum+30;
-			bPosition(3) = bPosition(3);
-			bPosition(4) = bPosition(4)+50*rowNum+30;
-			set_param(allBlocks{z}, 'Position', bPosition);
-		end
+        % Move all blocks downwards
+        for z = 1:length(allBlocks)
+            bPosition = get_param(allBlocks{z}, 'Position'); % Block position
+            bPosition(1) = bPosition(1);
+            bPosition(2) = bPosition(2)+50*rowNum+30;
+            bPosition(3) = bPosition(3);
+            bPosition(4) = bPosition(4)+50*rowNum+30;
+            set_param(allBlocks{z}, 'Position', bPosition);
+        end
 
-		% Move all annotations downwards
-		for gg = 1:length(annotations)
-			bPosition = get_param(annotations(gg), 'Position'); % Annotations position
-		 	bPosition(1) = bPosition(1);
-		 	bPosition(2) = bPosition(2)+50*rowNum+30;
-		 	set_param(annotations(gg), 'Position', bPosition);
+        % Move all annotations downwards
+        for gg = 1:length(annotations)
+            bPosition = get_param(annotations(gg), 'Position'); % Annotations position
+            bPosition(1) = bPosition(1);
+            bPosition(2) = bPosition(2)+50*rowNum+30;
+            set_param(annotations(gg), 'Position', bPosition);
         end
         
         % Get the list of Data Stores Memory blocks being rescoped to this address
-		DSCell = addressMap(allKeys{i});
+        DSCell = addressMap(allKeys{i});
         
         % For each Data Store in the list
         for DSM = 1:numDS
