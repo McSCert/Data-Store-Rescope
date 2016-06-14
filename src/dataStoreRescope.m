@@ -11,7 +11,9 @@ function dataStoreRescope(model, dontMove)
 %   
 %   dataStoreRescope(bdroot, {})    % rescope all Data Store Memory blocks
 %                                   % in the current Simulink system
-
+%
+%   dataStoreRescope('model4', {})    % rescope all Data Store Memory blocks
+%                                   % in the current Simulink system
     % Check model argument M
     % 1) Ensure the model is open
     try
@@ -67,10 +69,10 @@ function dataStoreRescope(model, dontMove)
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
                 disp(['Warning using ' mfilename ': ' char(10) ...
-                    ' Block "' dontMove{i} '" does not exist.'])
+                    ' Block "' removeNewline(dontMove{i}) '" does not exist.'])
             elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
                 disp(['Warning using ' mfilename ': ' char(10) ...
-                    ' Block "' dontMove{i} '" is not a Data Store Memory block.'])
+                    ' Block "' removeNewline(dontMove{i}) '" is not a Data Store block.'])
             end
         end
     end
