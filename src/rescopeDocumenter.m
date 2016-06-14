@@ -88,11 +88,9 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
         if ~strcmp(initialAddresses{doc}, rescopeAddresses{doc})
                        
             % Display name containing newlines with spaces instead
-            blockName = rescopedBlocks{doc};
-            blockName(blockName == char(10)) = ' ';
-            fprintf(file, 'Block Name: %s\n', blockName);
-            fprintf(file, 'Initial Location: %s\n', initialAddresses{doc});
-            fprintf(file, 'New Location: %s\n\n', rescopeAddresses{doc});
+            fprintf(file, 'Block Name: %s\n', removeNewline(rescopedBlocks{doc}));
+            fprintf(file, 'Initial Location: %s\n', removeNewline(initialAddresses{doc}));
+            fprintf(file, 'New Location: %s\n\n', removeNewline(rescopeAddresses{doc}));
         end
     end
     
