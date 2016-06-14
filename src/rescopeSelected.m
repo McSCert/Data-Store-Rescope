@@ -24,7 +24,7 @@ function rescopeSelected(model, dataStores)
         help(mfilename)
         return
     end
-    
+
     % 2) Check that model M is unlocked
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
@@ -51,12 +51,21 @@ function rescopeSelected(model, dataStores)
         help(mfilename)
         return
     end
-
+    
     toRescope = {};
     for i = 1:length(dataStores)
         
-        % Check if block in list dataStores is a Data Store block
-        blockType = get_param(dataStores{i}, 'BlockType');
+        try
+            % Try to get block type
+            blockType = get_param(dataStores{i}, 'BlockType');
+        catch
+            % Not a block
+            disp(['Error using ' mfilename ':' char(10) ...
+            ' "' dataStores{i} '" is not a block.'])
+            continue
+        end
+        
+        % Check that block is a Data Store Memory/Read/Write
         try
             assert(strcmp(blockType, 'DataStoreRead') || ...
                 strcmp(blockType, 'DataStoreWrite') || ...
@@ -65,7 +74,7 @@ function rescopeSelected(model, dataStores)
             if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                     strcmp(E.identifier, 'MATLAB:assertion:failed')
                 disp(['Error using ' mfilename ':' char(10) ...
-                    ' ' getfullname(dataStores{i}) ' is not a Data Store block.'])
+                    ' "' getfullname(dataStores{i}) '" is not a Data Store block.'])
                 continue
             else
                 disp(['Error using ' mfilename ':' char(10) ...
@@ -82,7 +91,7 @@ function rescopeSelected(model, dataStores)
             % If not, find corresponding DataStoreMemory block before adding
             temp = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
             if ~isempty(temp)
-                for j=1:length(temp)
+                for j = 1:length(temp)
                     toRescope{end + 1} = temp{j};
                 end
             end
