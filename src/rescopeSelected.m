@@ -42,6 +42,16 @@ function rescopeSelected(model, dataStores)
         end
     end
 
+    % Check that D is of type 'cell'
+    try
+        assert(iscell(dontMove));
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Invalid cell argument D.' char(10)])
+        help(mfilename)
+        return
+    end
+
     toRescope = {};
     for i = 1:length(dataStores)
         
