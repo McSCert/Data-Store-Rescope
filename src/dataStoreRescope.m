@@ -329,7 +329,7 @@ function dataStoreRescope(model, dontMove)
             lPint = get_param(mdlLines(zm), 'Points');
             xPint = lPint(:, 1); % First position integer
             yPint = lPint(:, 2); % Second position integer
-            yPint = yPint+50*rowNum+30;
+            yPint = yPint + (50 * rowNum) + 30;
             newPoint = [xPint yPint];
             set_param(mdlLines(zm), 'Points', newPoint);
         end
@@ -338,9 +338,9 @@ function dataStoreRescope(model, dontMove)
         for z = 1:length(allBlocks)
             bPosition = get_param(allBlocks{z}, 'Position'); % Block position
             bPosition(1) = bPosition(1);
-            bPosition(2) = bPosition(2)+50*rowNum+30;
+            bPosition(2) = bPosition(2) + (50 * rowNum) + 30;
             bPosition(3) = bPosition(3);
-            bPosition(4) = bPosition(4)+50*rowNum+30;
+            bPosition(4) = bPosition(4) + (50 * rowNum) + 30;
             set_param(allBlocks{z}, 'Position', bPosition);
         end
 
@@ -348,7 +348,7 @@ function dataStoreRescope(model, dontMove)
         for gg = 1:length(annotations)
             bPosition = get_param(annotations(gg), 'Position'); % Annotations position
             bPosition(1) = bPosition(1);
-            bPosition(2) = bPosition(2)+50*rowNum+30;
+            bPosition(2) = bPosition(2) + (50 * rowNum) + 30;
             set_param(annotations(gg), 'Position', bPosition);
         end
         
@@ -359,7 +359,7 @@ function dataStoreRescope(model, dontMove)
         for DSM = 1:numDS
             % Get the parameters for its position
             if (ceil(DSM/10) > 1)
-                top = 30 + 50 * (ceil(DSM/10) - 1);
+                top = 30 + (50 * (ceil(DSM/10)) - 1);
                 if (mod(DSM, 10) == 1)
                     start = 30;
                 end
