@@ -62,7 +62,7 @@ function dataStoreRescope(model, dontMove)
     % Remove data stores that are listed to not be rescoped from the list of data stores to examine
     for j = 1:length(dataStoreMem)
         for k = 1:length(dontMove)
-            if strcmp(get_param(dataStoreMem{j}, 'DataStoreName'), get_param(dontMove{k}, 'DataStoreName'))
+            if strcmp(dataStoreMem{j}, dontMove{k})
                 dataStoresToIgnore = [dataStoresToIgnore dataStoreMem{j}];
             end
         end
