@@ -13,7 +13,19 @@ function rescopeSelected(model, dataStores)
 %   rescopeSelected(bdroot, gcbs)    % rescope the selected Data Store Memory
 %                                    % blocks in the current Simulink system
 
-    % Perform a check to see if the model is open and unlocked
+    % Check model argument M
+    % 1) Ensure the model is open
+    try
+        assert(ischar(model));
+        assert(bdIsLoaded(model));
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
+        help(mfilename)
+        return
+    end
+    
+    % 2) Check that model M is unlocked
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
