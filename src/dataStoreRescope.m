@@ -65,7 +65,7 @@ function dataStoreRescope(model, dontMove)
     % Checks if blocks in dontMove exist and are data stores
     for i=1:length(dontMove)
         try
-            get_param(dontMove{i}, 'DataStoreName')
+            get_param(dontMove{i}, 'DataStoreName');
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
                 disp(['Warning using ' mfilename ': ' char(10) ...
