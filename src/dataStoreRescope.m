@@ -62,8 +62,8 @@ function dataStoreRescope(model, dontMove)
     toRescopeAddress = {};
     initialAddress = {};
     
-    % Checks if blocks in dontMove exist and are data stores
-    for i=1:length(dontMove)
+    % Check if blocks in dontMove exist and are Data Store blocks
+    for i = 1:length(dontMove)
         try
             get_param(dontMove{i}, 'DataStoreName');
         catch E
