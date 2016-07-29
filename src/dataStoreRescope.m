@@ -62,6 +62,9 @@ function dataStoreRescope(model, dontMove)
     toRescopeAddress = {};
     initialAddress = {};
     
+    % Get config file params
+    linkNum=getDataStoreRescopeConfig('linkNum', 0);
+    
     % Check if blocks in dontMove exist and are Data Store blocks
     for i = 1:length(dontMove)
         try
@@ -258,24 +261,26 @@ function dataStoreRescope(model, dontMove)
         % Check if lowest common ancestor is in a referenced subsystem
         % (library subsystem) where Data Store Memory blocks shouldn't be
         % rescoped
-        notRef = false;
-        while ~notRef
-            % Check if lowest common ancestor is in a referenced subsystem
-            try
-                isRef = get_param(lowestCommonAncestor, 'ReferenceBlock');
-            catch
-                isRef = '';
-            end
-            
-            if strcmp(isRef, '')
-                notRef = true;
-            else
-                % If the current subsystem is referenced, move up one
-                % subsytem for the lowest common ancestor
-                notRef = false;
-                LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
-                LCASubstrings(end) = [];
-                lowestCommonAncestor = strjoin(LCASubstrings, '/');
+        if ~linkNum
+            notRef = false;
+            while ~notRef
+                % Check if lowest common ancestor is in a referenced subsystem
+                try
+                    isRef = get_param(lowestCommonAncestor, 'ReferenceBlock');
+                catch
+                    isRef = '';
+                end
+                
+                if strcmp(isRef, '')
+                    notRef = true;
+                else
+                    % If the current subsystem is referenced, move up one
+                    % subsytem for the lowest common ancestor
+                    notRef = false;
+                    LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
+                    LCASubstrings(end) = [];
+                    lowestCommonAncestor = strjoin(LCASubstrings, '/');
+                end
             end
         end
 
@@ -420,4 +425,24 @@ function dataStoreRescope(model, dontMove)
     
     % Create logfile to document the operation
     rescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
+end
+
+function val = getDataStoreRescopeConfig(parameter, default)
+    val = default;
+    filePath = mfilename('fullpath');
+    name = mfilename;
+    filePath = filePath(1:end-length(name));
+    fileName = [filePath 'config.txt'];
+    file = fopen(fileName);
+    line = fgetl(file);
+    paramPattern = ['^' parameter ':[ ]*[0-9]'];
+    while ischar(line)
+        match = regexp(line, paramPattern, 'match');
+        if ~isempty(match)
+            val = match{1};
+            val = val(end);
+            break
+        end
+    end
+    fclose(file);
 end

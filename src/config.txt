@@ -1,0 +1,2 @@
+#the value of this parameter should be set to 0 or 1
+linkNum: 0
