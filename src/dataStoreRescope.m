@@ -52,9 +52,6 @@ function dataStoreRescope(model, dontMove)
         help(mfilename)
         return
     end
-    
-    % Find all Data Store Memory blocks in the model
-    dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
 
     % Initial declarations
     dataStoresToIgnore = {};
@@ -63,7 +60,11 @@ function dataStoreRescope(model, dontMove)
     initialAddress = {};
     
     % Get config file params
-    linkedBlocksEnabled=getDataStoreRescopeConfig('linkedBlocksEnabled', 0);
+    linkedBlocksEnabled = getDataStoreRescopeConfig('linkedBlocksEnabled', 0);
+    linkedBlocksEnabled = str2num(linkedBlocksEnabled);
+    
+    % Find all Data Store Memory blocks in the model
+    dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
     
     % Check if blocks in dontMove exist and are Data Store blocks
     for i = 1:length(dontMove)
@@ -77,6 +78,7 @@ function dataStoreRescope(model, dontMove)
                 disp(['Warning using ' mfilename ': ' char(10) ...
                     ' Block "' removeNewline(dontMove{i}) '" is not a Data Store block.'])
             end
+            return
         end
     end
 
@@ -97,14 +99,16 @@ function dataStoreRescope(model, dontMove)
         
         % Ensure that found Data Store Memory block isn't in a linked
         % subsystem
-        try
-            isRef = get_param(initialLocation, 'ReferenceBlock');
-        catch
-            isRef = '';
-        end
-        
-        if ~isempty(isRef)
-            continue
+        if ~linkedBlocksEnabled
+            try
+                isRef = get_param(initialLocation, 'ReferenceBlock');
+            catch
+                isRef = '';
+            end
+            
+            if ~isempty(isRef)
+                continue
+            end
         end
         
         % Get other Data Store Memory blocks that share the same name
@@ -318,6 +322,34 @@ function dataStoreRescope(model, dontMove)
     % rescoped, and move the blocks to their corresponding address
     allKeys = keys(addressMap);
     for i = 1:length(allKeys)
+        %disable link for subsystem if necessary
+        if linkedBlocksEnabled
+            try
+                linkStatus = get_param(allKeys{i}, 'LinkStatus');
+                if strcmp(linkStatus, 'resolved')
+                    set_param(allKeys{i}, 'LinkStatus', 'inactive');
+                elseif strcmp(linkStatus, 'implicit')
+                    %if a subsystem higher in the hierarchy is linked find
+                    %it and make link inactive
+                    flag = 1;
+                    linkedSys = allKeys{i};
+                    while flag
+                        linkedSys = get_param(linkedSys, 'parent');
+                        linkStatus = get_param(linkedSys, 'LinkStatus');
+                        if strcmp(linkStatus, 'resolved')
+                            set_param(linkedSys, 'LinkStatus', 'inactive');
+                            flag = 0;
+                        end
+                    end
+                end
+            catch
+                %catches the case when the system indicated in allKeys{i}
+                %is the top level block diagram, which doesn't have the
+                %parameter 'LinkStatus'
+                continue
+            end
+        end
+        
         % Setup for moving Data Store Memory blocks to the top of the model
         start = 30;
         top = 30;
