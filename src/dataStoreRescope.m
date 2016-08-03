@@ -443,6 +443,7 @@ function val = getDataStoreRescopeConfig(parameter, default)
             val = val(end);
             break
         end
+        line = fgetl(file);
     end
     fclose(file);
 end
