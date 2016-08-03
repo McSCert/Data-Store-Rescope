@@ -63,7 +63,7 @@ function dataStoreRescope(model, dontMove)
     initialAddress = {};
     
     % Get config file params
-    linkNum=getDataStoreRescopeConfig('linkNum', 0);
+    linkedBlocksEnabled=getDataStoreRescopeConfig('linkedBlocksEnabled', 0);
     
     % Check if blocks in dontMove exist and are Data Store blocks
     for i = 1:length(dontMove)
@@ -261,7 +261,7 @@ function dataStoreRescope(model, dontMove)
         % Check if lowest common ancestor is in a referenced subsystem
         % (library subsystem) where Data Store Memory blocks shouldn't be
         % rescoped
-        if ~linkNum
+        if ~linkedBlocksEnabled
             notRef = false;
             while ~notRef
                 % Check if lowest common ancestor is in a referenced subsystem
