@@ -6,8 +6,8 @@
 # across linked subsystem boundaries is allowed.
 #
 # To selectively allow Data Store Memory block movement for individual 
-# linked subsystems, set the parameter value to 0, and then "Break Link" to
-# the desired subsystems.
+# linked subsystems, set the parameter value to 0, and then "Disable Link" 
+# of the desired subsystems.
 # 
 # Acceptable parameter values are:
 #	0 		to disable rescoping in linked subsystems
