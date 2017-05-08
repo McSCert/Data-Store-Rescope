@@ -323,30 +323,32 @@ function dataStoreRescope(model, dontMove)
     allKeys = keys(addressMap);
     for i = 1:length(allKeys)
         %disable link for subsystem if necessary
-        if linkedBlocksEnabled
-            try
-                linkStatus = get_param(allKeys{i}, 'LinkStatus');
-                if strcmp(linkStatus, 'resolved')
-                    set_param(allKeys{i}, 'LinkStatus', 'inactive');
-                elseif strcmp(linkStatus, 'implicit')
-                    %if a subsystem higher in the hierarchy is linked find
-                    %it and make link inactive
-                    flag = 1;
-                    linkedSys = allKeys{i};
-                    while flag
-                        linkedSys = get_param(linkedSys, 'parent');
-                        linkStatus = get_param(linkedSys, 'LinkStatus');
-                        if strcmp(linkStatus, 'resolved')
-                            set_param(linkedSys, 'LinkStatus', 'inactive');
-                            flag = 0;
+        if ~strcmp(get_param(allKeys{i}, 'type'), 'block_diagram')
+            if linkedBlocksEnabled
+                try
+                    linkStatus = get_param(allKeys{i}, 'LinkStatus');
+                    if strcmp(linkStatus, 'resolved')
+                        set_param(allKeys{i}, 'LinkStatus', 'inactive');
+                    elseif strcmp(linkStatus, 'implicit')
+                        %if a subsystem higher in the hierarchy is linked find
+                        %it and make link inactive
+                        flag = 1;
+                        linkedSys = allKeys{i};
+                        while flag
+                            linkedSys = get_param(linkedSys, 'parent');
+                            linkStatus = get_param(linkedSys, 'LinkStatus');
+                            if strcmp(linkStatus, 'resolved')
+                                set_param(linkedSys, 'LinkStatus', 'inactive');
+                                flag = 0;
+                            end
                         end
                     end
+                catch
+                    %catches the case when the system indicated in allKeys{i}
+                    %is the top level block diagram, which doesn't have the
+                    %parameter 'LinkStatus'
+                    continue
                 end
-            catch
-                %catches the case when the system indicated in allKeys{i}
-                %is the top level block diagram, which doesn't have the
-                %parameter 'LinkStatus'
-                continue
             end
         end
         
