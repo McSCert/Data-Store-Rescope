@@ -1,6 +1,6 @@
 function s = removeNewline(string)
 % REMOVENEWLINE Replaces newlines with spaces
-% M. Bialy
+% M. Jaskolka
     if ischar(string)
         s = string;
         s(s == char(10)) = ' ';
