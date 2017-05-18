@@ -1,5 +1,5 @@
 function dataStoreRescope(model, dontMove)
-% DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper 
+% DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper
 % scopes.
 %
 %   DATASTORERESCOPE(M, D) moves all Data Store Memory blocks in model M to
@@ -8,7 +8,7 @@ function dataStoreRescope(model, dontMove)
 %       D is a cell array of Data Store Memory block path names
 %
 %   Example:
-%   
+%
 %   dataStoreRescope(bdroot, {})    % rescope all Data Store Memory blocks
 %                                   % in the current Simulink system
 %
@@ -25,12 +25,12 @@ function dataStoreRescope(model, dontMove)
         help(mfilename)
         return
     end
-    
+
     % 2) Check that model M is unlocked
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
-        if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
+        if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
             disp(['Error using ' mfilename ':' char(10) ...
                 ' File is locked.'])
@@ -42,7 +42,7 @@ function dataStoreRescope(model, dontMove)
             return
         end
     end
-    
+
     % Check that D is of type 'cell'
     try
         assert(iscell(dontMove));
@@ -58,14 +58,14 @@ function dataStoreRescope(model, dontMove)
     memToRescope = {};
     toRescopeAddress = {};
     initialAddress = {};
-    
+
     % Get config file params
     linkedBlocksEnabled = getDataStoreRescopeConfig('linkedBlocksEnabled', 0);
     linkedBlocksEnabled = str2num(linkedBlocksEnabled);
-    
+
     % Find all Data Store Memory blocks in the model
     dataStoreMem = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'BlockType', 'DataStoreMemory');
-    
+
     % Check if blocks in dontMove exist and are Data Store blocks
     for i = 1:length(dontMove)
         try
@@ -74,6 +74,9 @@ function dataStoreRescope(model, dontMove)
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
                 disp(['Warning using ' mfilename ': ' char(10) ...
                     ' Block "' removeNewline(dontMove{i}) '" does not exist.'])
+            elseif strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjHandle')
+                disp(['Warning using ' mfilename ': ' char(10) ...
+                    '"' removeNewline(num2str(dontMove{i})) '" is not a valid block.'])
             elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
                 disp(['Warning using ' mfilename ': ' char(10) ...
                     ' Block "' removeNewline(dontMove{i}) '" is not a Data Store block.'])
@@ -96,7 +99,7 @@ function dataStoreRescope(model, dontMove)
     for i = 1:length(dataStoreMem)
         % Get initial location, name of the data store
         initialLocation = get_param(dataStoreMem{i}, 'parent');
-        
+
         % Ensure that found Data Store Memory block isn't in a linked
         % subsystem
         if ~linkedBlocksEnabled
@@ -105,23 +108,23 @@ function dataStoreRescope(model, dontMove)
             catch
                 isRef = '';
             end
-            
+
             if ~isempty(isRef)
                 continue
             end
         end
-        
+
         % Get other Data Store Memory blocks that share the same name
         dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
         memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
         memsWithSameName = setdiff(memsWithSameName, dataStoreMem{i});
-        
+
         memSplit = regexp(initialLocation, '/', 'split');
         currentLowerBound = [];
         pushDownOnly = false;
         memsAboveLevels = {};
         otherMemLevels = {};
-        
+
         % Get bounds on which Data Store Memory blocks already cover which
         % scopes
         for j = 1:length(memsWithSameName)
@@ -141,7 +144,7 @@ function dataStoreRescope(model, dontMove)
                 pushDownOnly = true;
             end
         end
-        
+
         % Get list of all Data Store Read and Write blocks
         dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
         dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
@@ -168,7 +171,7 @@ function dataStoreRescope(model, dontMove)
                 k = k + 1;
             end
         catch E
-            % If a Data Store Memory has no associated Reads/Writes, 
+            % If a Data Store Memory has no associated Reads/Writes,
             % its lowest common ancestor is set as its own location
             if strcmp(E.identifier, 'MATLAB:badsubscript')
                 lowestCommonAncestor = initialLocation;
@@ -176,17 +179,17 @@ function dataStoreRescope(model, dontMove)
         end
 
         for j = 2:length(dataStoreReadWrite)
-            
+
             % Split off current lowest common ancestor name and current data
             % store block name into substrings for each subsystem in the block path
             LCASubstrings = regexp(lowestCommonAncestor, '/', 'split');
             dataStoreSubstrings = regexp(dataStoreReadWrite{j}, '/', 'split');
             dataStoreLevel = get_param(dataStoreReadWrite{j}, 'parent');
             dataStoreLevelSplit = regexp(dataStoreLevel, '/', 'split');
-            
+
             % Check if the Data Store Read/Write is in the scope of this
             % particular data store
-            
+
             % If there's a Data Store Memory block higher than the current
             % one in the subsystem hierarchy that shares a DataStoreName,
             % don't consider blocks that could be in that data store's
@@ -211,16 +214,16 @@ function dataStoreRescope(model, dontMove)
                             flag = false;
                         end
                     end
-                    if flag              
+                    if flag
                         disp(['Warning using ' mfilename ':' char(10) ...
                         ' Block "' removeNewline(dataStoreReadWrite{j}) ...
                         '" is out of scope of all Data Store Memory blocks '...
                         'with DataStoreName "' dataStoreName '".']);
-                    
+
                         disp([' Due to multiple matching Data Store Memory ' ...
                         'blocks in the model with this DataStoreName, ' ...
                         'it cannot be determined which is to be used.']);
-                    
+
                         disp([' If the desired Data Story Memory block ' ...
                         'is "' removeNewline(dataStoreMem{i}) ...
                         '", move it to the root, and re-run this operation.']);
@@ -228,7 +231,7 @@ function dataStoreRescope(model, dontMove)
                     continue
                 end
             end
-            
+
             % If there's a Data Store Memory block lower than the current
             % one in the subsystem hierarchy that shares a DataStoreName,
             % don't consider blocks in that Data Store Memory's scope
@@ -238,13 +241,13 @@ function dataStoreRescope(model, dontMove)
                     continue
                 end
             end
-                      
+
             % Find the lowest common ancestor based on the block paths
             % between current lowest common ancestor and the current block
             flag = true;
             lowestCommonAncestor = '';
             k = 1;
-            
+
             while flag
                 try
                     if strcmp(LCASubstrings{k}, dataStoreSubstrings{k})
@@ -274,7 +277,7 @@ function dataStoreRescope(model, dontMove)
                 catch
                     isRef = '';
                 end
-                
+
                 if strcmp(isRef, '')
                     notRef = true;
                 else
@@ -318,7 +321,7 @@ function dataStoreRescope(model, dontMove)
         addressMap(toRescopeAddress{i}) = temp;
     end
 
-    % Iterate through each address where Data Store Memory blocks are being 
+    % Iterate through each address where Data Store Memory blocks are being
     % rescoped, and move the blocks to their corresponding address
     allKeys = keys(addressMap);
     for i = 1:length(allKeys)
@@ -351,7 +354,7 @@ function dataStoreRescope(model, dontMove)
                 end
             end
         end
-        
+
         % Setup for moving Data Store Memory blocks to the top of the model
         start = 30;
         top = 30;
@@ -392,10 +395,10 @@ function dataStoreRescope(model, dontMove)
             bPosition(2) = bPosition(2) + (50 * rowNum) + 30;
             set_param(annotations(gg), 'Position', bPosition);
         end
-        
+
         % Get the list of Data Stores Memory blocks being rescoped to this address
         DSCell = addressMap(allKeys{i});
-        
+
         % For each Data Store in the list
         for DSM = 1:numDS
             % Get the parameters for its position
@@ -405,10 +408,10 @@ function dataStoreRescope(model, dontMove)
                     start = 30;
                 end
             end
-            
+
             % Get parameters for the new block
             name = get_param(DSCell{DSM}, 'Name');
-            
+
             % Create new rescoped Data Store Memory block. If a block with
             % 'Name' parameter already exists, add a number suffix
             flag = true;
@@ -433,7 +436,7 @@ function dataStoreRescope(model, dontMove)
                     end
                 end
             end
-            
+
             % Notify user if 'Name' parameter of a rescoped block was changed
             if ~strcmp(oldName, name)
                 disp(['Warning using ' mfilename ':' char(10) ...
@@ -441,10 +444,10 @@ function dataStoreRescope(model, dontMove)
                 '" already exists at location ' removeNewline(allKeys{i}) '.' char(10) ...
                 ' The rescoped block has been renamed to "' removeNewline(name) '".'])
             end
-            
+
             % Remove old block
             delete_block(DSCell{DSM});
-            
+
             % Adjust position of the newly rescoped Data Store Memory block
             rsDSMemPos = get_param(rescopedDSMem, 'Position');
             newPos(1) = start;
@@ -454,9 +457,9 @@ function dataStoreRescope(model, dontMove)
             start = newPos(3) + 20;
             set_param([allKeys{i} '/' name], 'Position', newPos);
             newPos = [];
-        end 
+        end
     end
-    
+
     % Create logfile to document the operation
     rescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
 end
