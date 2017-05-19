@@ -52,6 +52,18 @@ function dataStoreRescope(model, dontMove)
         help(mfilename)
         return
     end
+    
+    % Check that arguments of D are blocks
+    try
+        for i = 1:length(dontMove)
+            assert(ischar(dontMove{i}))
+        end
+    catch
+        disp(['Error using ' mfilename ':' char(10) ...
+                ' Invalid block in argument D.' char(10)])
+        help(mfilename)
+        return
+    end
 
     % Initial declarations
     dataStoresToIgnore = {};
@@ -70,6 +82,7 @@ function dataStoreRescope(model, dontMove)
     for i = 1:length(dontMove)
         try
             get_param(dontMove{i}, 'DataStoreName');
+            assert(~isempty(find_system(bdroot, 'LookUnderMasks', 'all', 'FollowLinks', 'on', 'Name', dontMove{i})))
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
                 disp(['Warning using ' mfilename ': ' char(10) ...
