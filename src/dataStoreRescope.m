@@ -60,7 +60,7 @@ function dataStoreRescope(model, dontMove)
         end
     catch
         disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid block in argument D.' char(10)])
+                ' Invalid argument type in argument D.' char(10)])
         help(mfilename)
         return
     end
@@ -82,7 +82,6 @@ function dataStoreRescope(model, dontMove)
     for i = 1:length(dontMove)
         try
             get_param(dontMove{i}, 'DataStoreName');
-            assert(~isempty(find_system(bdroot, 'LookUnderMasks', 'all', 'FollowLinks', 'on', 'Name', dontMove{i})))
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
                 disp(['Warning using ' mfilename ': ' char(10) ...
