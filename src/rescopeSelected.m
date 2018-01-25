@@ -1,17 +1,16 @@
 function rescopeSelected(model, dataStores)
-% RESCOPESELECTED Run the dataStoreRescope function on the selected Data 
-% Store Memory blocks.
+% RESCOPESELECTED Rescope selected Data Store Memory blocks.
 %
-%   RESCOPESELECTED(M, D) calls the dataStoreRescope function on model M
-%   such that only the Data Store Memory blocks listed in D are rescoped, 
-%   where:
-%       M is the Simulink model name (or top-level system name)
-%       D is a cell array of Data Store Memory block path names
+%   Inports:
+%       model       Simulink model name.
+%       dataStores  Cell array of Data Store Memory block paths.
+%
+%   Outports:
+%       N/A
 %
 %   Example:
-%   
-%   rescopeSelected(bdroot, gcbs)    % rescope the selected Data Store Memory
-%                                    % blocks in the current Simulink system
+%       rescopeSelected(bdroot, gcbs)
+%           Rescope the selected Data Store Memory blocks in the current Simulink system.
 
     % Check model argument M
     % 1) Ensure the model is open
@@ -29,7 +28,7 @@ function rescopeSelected(model, dataStores)
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
-        if strcmp(E.identifier, 'MATLAB:assert:failed') || ... 
+        if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
             disp(['Error using ' mfilename ':' char(10) ...
                 ' File is locked.'])
@@ -51,10 +50,10 @@ function rescopeSelected(model, dataStores)
         help(mfilename)
         return
     end
-    
+
     toRescope = {};
     for i = 1:length(dataStores)
-        
+
         try
             % Try to get block type
             blockType = get_param(dataStores{i}, 'BlockType');
@@ -64,7 +63,7 @@ function rescopeSelected(model, dataStores)
             ' "' dataStores{i} '" is not a block.'])
             continue
         end
-        
+
         % Check that block is a Data Store Memory/Read/Write
         try
             assert(strcmp(blockType, 'DataStoreRead') || ...
@@ -83,7 +82,7 @@ function rescopeSelected(model, dataStores)
                 return
             end
         end
-        
+
         dataStoreName = get_param(dataStores{i}, 'DataStoreName');
 
         % Check if selected data store block is the DataStoreMemory block
@@ -99,8 +98,8 @@ function rescopeSelected(model, dataStores)
             toRescope{end + 1} = dataStores{i};
         end
     end
-    
-    % Find all other data store memory blocks that aren't in list "toRescope" 
+
+    % Find all other data store memory blocks that aren't in list "toRescope"
     % and pass those to DataStoreRescope as the list of blocks to not rescope
     otherMems = find_system(model, 'LookUnderMasks', 'all', 'FollowLinks', 'on', 'BlockType', 'DataStoreMemory');
     otherMems = setdiff(otherMems, toRescope);

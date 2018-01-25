@@ -1,19 +1,20 @@
 function dataStoreRescope(model, dontMove)
-% DATASTORERESCOPE Move Data Store Memory blocks in a model to their proper
-% scopes.
+% DATASTORERESCOPE Move Data Store Memory blocks to their proper scopes.
 %
-%   DATASTORERESCOPE(M, D) moves all Data Store Memory blocks in model M to
-%    their proper scopes, except for those in D, where:
-%       M is the Simulink model name (or top-level system name)
-%       D is a cell array of Data Store Memory block path names
+%   Inports:
+%       model       Simulink system name.
+%       dontMove    Cell array of Data Store Memory block paths.
 %
-%   Example:
+%   Outports:
+%       N/A
 %
-%   dataStoreRescope(bdroot, {})    % rescope all Data Store Memory blocks
-%                                   % in the current Simulink system
+%   Examples:
+%       dataStoreRescope(bdroot, {})
+%           Rescope all Data Store Memory blocks in the current Simulink system.
 %
-%   dataStoreRescope('DataStoreRescopeDemo', {'DataStoreRescopeDemo/Data Store Memory 1'})    % rescope all Data Store Memory blocks
-%                                                                                             % except for Data Store Memory 1
+%       dataStoreRescope('DataStoreRescopeDemo', {'DataStoreRescopeDemo/Data Store Memory 1'})
+%           Rescope all Data Store Memory blocks except for Data Store Memory 1.
+
     % Check model argument M
     % 1) Ensure the model is open
     try
@@ -52,7 +53,7 @@ function dataStoreRescope(model, dontMove)
         help(mfilename)
         return
     end
-    
+
     % Check that arguments of D are blocks
     try
         for i = 1:length(dontMove)
