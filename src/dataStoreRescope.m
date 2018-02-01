@@ -1,11 +1,11 @@
 function dataStoreRescope(model, dontMove)
 % DATASTORERESCOPE Move Data Store Memory blocks to their proper scopes.
 %
-%   Inports:
+%   Inputs:
 %       model       Simulink system name.
 %       dontMove    Cell array of Data Store Memory block paths.
 %
-%   Outports:
+%   Outputs:
 %       N/A
 %
 %   Examples:
@@ -15,43 +15,32 @@ function dataStoreRescope(model, dontMove)
 %       dataStoreRescope('DataStoreRescopeDemo', {'DataStoreRescopeDemo/Data Store Memory 1'})
 %           Rescope all Data Store Memory blocks except for Data Store Memory 1.
 
-    % Check model argument M
+    % Check model argument
     % 1) Ensure the model is open
     try
         assert(ischar(model));
         assert(bdIsLoaded(model));
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
-        help(mfilename)
-        return
+        error('Invalid model argument. Model may not be loaded or name is invalid.');
     end
 
-    % 2) Check that model M is unlocked
+    % 2) Check that model is unlocked
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
-            disp(['Error using ' mfilename ':' char(10) ...
-                ' File is locked.'])
-            return
+            error('File is locked.');
         else
-            disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid model name argument M.' char(10)])
-            help(mfilename)
-            return
+            error('Invalid model argument.');
         end
     end
 
-    % Check that D is of type 'cell'
+    % Check that dontMove is of type 'cell'
     try
         assert(iscell(dontMove));
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid cell argument D.' char(10)])
-        help(mfilename)
-        return
+        error('Invalid argument type in dontMove argument.');
     end
 
     % Check that arguments of D are blocks
@@ -60,10 +49,7 @@ function dataStoreRescope(model, dontMove)
             assert(ischar(dontMove{i}))
         end
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid argument type in argument D.' char(10)])
-        help(mfilename)
-        return
+        error('Invalid argument type in dontMove argument.')
     end
 
     % Initial declarations
@@ -85,16 +71,12 @@ function dataStoreRescope(model, dontMove)
             get_param(dontMove{i}, 'DataStoreName');
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
-                disp(['Warning using ' mfilename ': ' char(10) ...
-                    ' Block "' removeNewline(dontMove{i}) '" does not exist.'])
+                error(['Block "' removeNewline(dontMove{i}) '" does not exist.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjHandle')
-                disp(['Warning using ' mfilename ': ' char(10) ...
-                    '"' removeNewline(num2str(dontMove{i})) '" is not a valid block.'])
+                error(['"' removeNewline(num2str(dontMove{i})) '" is not a valid block.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
-                disp(['Warning using ' mfilename ': ' char(10) ...
-                    ' Block "' removeNewline(dontMove{i}) '" is not a Data Store block.'])
+                error(['Block "' removeNewline(dontMove{i}) '" is not a Data Store block.']);
             end
-            return
         end
     end
 
@@ -129,7 +111,8 @@ function dataStoreRescope(model, dontMove)
 
         % Get other Data Store Memory blocks that share the same name
         dataStoreName = get_param(dataStoreMem{i}, 'DataStoreName');
-        memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', 'DataStoreName', dataStoreName);
+        memsWithSameName = find_system(model, 'BlockType', 'DataStoreMemory', ...
+            'DataStoreName', dataStoreName);
         memsWithSameName = setdiff(memsWithSameName, dataStoreMem{i});
 
         memSplit = regexp(initialLocation, '/', 'split');
@@ -159,7 +142,8 @@ function dataStoreRescope(model, dontMove)
         end
 
         % Get list of all Data Store Read and Write blocks
-        dataStoreBlocks = find_system(model, 'FollowLinks', 'on', 'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
+        dataStoreBlocks = find_system(model, 'FollowLinks', 'on', ...
+            'LookUnderMasks', 'all', 'DataStoreName', dataStoreName);
         dataStoreReadWrite = setdiff(dataStoreBlocks, dataStoreMem);
 
         % Find the lowest common ancestor of the Data Store Read and Write blocks.
@@ -228,18 +212,17 @@ function dataStoreRescope(model, dontMove)
                         end
                     end
                     if flag
-                        disp(['Warning using ' mfilename ':' char(10) ...
-                        ' Block "' removeNewline(dataStoreReadWrite{j}) ...
-                        '" is out of scope of all Data Store Memory blocks '...
-                        'with DataStoreName "' dataStoreName '".']);
 
-                        disp([' Due to multiple matching Data Store Memory ' ...
+                        msg = ['Block "' removeNewline(dataStoreReadWrite{j}) ...
+                        '" is out of scope of all Data Store Memory blocks ' ...
+                        'with DataStoreName "' dataStoreName '".' newline ...
+                        'Due to multiple matching Data Store Memory ' ...
                         'blocks in the model with this DataStoreName, ' ...
-                        'it cannot be determined which is to be used.']);
-
-                        disp([' If the desired Data Story Memory block ' ...
+                        'it cannot be determined which is to be used.' newline ...
+                        'If the desired Data Story Memory block ' ...
                         'is "' removeNewline(dataStoreMem{i}) ...
-                        '", move it to the root, and re-run this operation.']);
+                        '", move it to the root, and re-run this operation.'];
+                        warning(msg);
                     end
                     continue
                 end
@@ -376,10 +359,12 @@ function dataStoreRescope(model, dontMove)
         colNum = 10;
 
         % Move down all blocks and lines in the model
-        mdlLines = find_system(allKeys{i}, 'Searchdepth', 1, 'FollowLinks', 'on', 'LookUnderMasks', 'All', 'FindAll', 'on', 'Type', 'line');
+        mdlLines = find_system(allKeys{i}, 'Searchdepth', 1, 'FollowLinks', 'on', ...
+            'LookUnderMasks', 'All', 'FindAll', 'on', 'Type', 'line');
         allBlocks = find_system(allKeys{i}, 'SearchDepth', 1);
         allBlocks = setdiff(allBlocks, allKeys{i});
-        annotations = find_system(allKeys{i}, 'FindAll', 'on', 'SearchDepth', 1, 'type', 'annotation');
+        annotations = find_system(allKeys{i}, 'FindAll', 'on', ...
+            'SearchDepth', 1, 'type', 'annotation');
 
         % Move all lines downwards
         for zm = 1:length(mdlLines)
@@ -452,10 +437,10 @@ function dataStoreRescope(model, dontMove)
 
             % Notify user if 'Name' parameter of a rescoped block was changed
             if ~strcmp(oldName, name)
-                disp(['Warning using ' mfilename ':' char(10) ...
-                ' Data Store Memory block with name "' removeNewline(oldName) ...
-                '" already exists at location ' removeNewline(allKeys{i}) '.' char(10) ...
-                ' The rescoped block has been renamed to "' removeNewline(name) '".'])
+                msg = ['Data Store Memory block with name "' removeNewline(oldName) ...
+                '" already exists at location ' removeNewline(allKeys{i}) '.' newline ...
+                'The rescoped block has been renamed to "' removeNewline(name) '".'])
+                warning(msg);
             end
 
             % Remove old block
