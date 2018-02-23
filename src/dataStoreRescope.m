@@ -439,7 +439,7 @@ function dataStoreRescope(model, dontMove)
             if ~strcmp(oldName, name)
                 msg = ['Data Store Memory block with name "' removeNewline(oldName) ...
                 '" already exists at location ' removeNewline(allKeys{i}) '.' newline ...
-                'The rescoped block has been renamed to "' removeNewline(name) '".'])
+                'The rescoped block has been renamed to "' removeNewline(name) '".'];
                 warning(msg);
             end
 
