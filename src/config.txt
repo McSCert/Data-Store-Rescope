@@ -13,4 +13,6 @@
 #    0      to disable rescoping in linked subsystems
 #    1      to enable rescoping in linked subsystems
 #
+# Default is 1.
+#
 linkedBlocksEnabled: 1
