@@ -1,54 +1,53 @@
 function rescopeSelected(model, dataStores)
-% RESCOPESELECTED Rescope selected Data Store Memory blocks.
+% RESCOPESELECTED Rescope specific Data Store Memory blocks.
 %
 %   Inports:
 %       model       Simulink model name.
-%       dataStores  Cell array of Data Store Memory block paths.
+%       dataStores  Cell array of Data Store Memory block pathnames.
 %
 %   Outports:
 %       N/A
 %
 %   Example:
 %       rescopeSelected(bdroot, gcbs)
-%           Rescope the selected Data Store Memory blocks in the current Simulink system.
+%           Rescopes the selected Data Store Memory blocks in the current Simulink system.
 
-    % Check model argument M
+    % Check model argument
     % 1) Ensure the model is open
+    
     try
+        model = bdroot(model);
         assert(ischar(model));
         assert(bdIsLoaded(model));
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-            ' Invalid model argument M. Model may not be loaded or name is invalid.' char(10)])
-        help(mfilename)
-        return
+        error(['Invalid model ''' num2str(model) '''. The model may not be loaded or the name is invalid.'])
     end
 
-    % 2) Check that model M is unlocked
+    % 2) Check that the model is unlocked
     try
         assert(strcmp(get_param(bdroot(model), 'Lock'), 'off'))
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
-            disp(['Error using ' mfilename ':' char(10) ...
-                ' File is locked.'])
-            return
+            error('Model is locked.')
         else
-            disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid model name argument M.' char(10)])
-            help(mfilename)
-            return
+            error(['Invalid model name ''' num2str(model) '''.'])
         end
     end
 
-    % Check that D is of type 'cell'
+    % Check dataStores argument 
+    % 1) Ensure it is a cell array
     try
         assert(iscell(dataStores));
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid cell argument D.' char(10)])
-        help(mfilename)
-        return
+        error('Argument dataStores must be a cell array.')
+    end
+    
+    % 2) Ensure it does not have nesting
+    try
+       assert(~iscellcell(dataStores));
+    catch
+       error('Argument dataStores must be a cell array with no nested cells.')
     end
 
     toRescope = {};
@@ -59,8 +58,7 @@ function rescopeSelected(model, dataStores)
             blockType = get_param(dataStores{i}, 'BlockType');
         catch
             % Not a block
-            disp(['Error using ' mfilename ':' char(10) ...
-            ' "' dataStores{i} '" is not a block.'])
+            warning(['''' num2str(dataStores{i}) ''' is not a block.'])
             continue
         end
 
@@ -72,14 +70,10 @@ function rescopeSelected(model, dataStores)
         catch E
             if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                     strcmp(E.identifier, 'MATLAB:assertion:failed')
-                disp(['Error using ' mfilename ':' char(10) ...
-                    ' "' getfullname(dataStores{i}) '" is not a Data Store block.'])
+                warning(['''' getfullname(dataStores{i}) ''' is not a Data Store block and has not been rescoped.'])
                 continue
             else
-                disp(['Error using ' mfilename ':' char(10) ...
-                ' Invalid data store list argument D.' char(10)])
-                help(mfilename)
-                return
+                error('Invalid Data Store cell array argument.')
             end
         end
 
