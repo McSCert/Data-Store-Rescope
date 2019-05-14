@@ -10,14 +10,15 @@ function dataStoreRescope(model, dontMove)
 %
 %   Examples:
 %       dataStoreRescope(bdroot, {})
-%           Rescope all Data Store Memory blocks in the current Simulink system.
+%           Rescopes all Data Store Memory blocks in the current Simulink system.
 %
 %       dataStoreRescope('DataStoreRescopeDemo', {'DataStoreRescopeDemo/Data Store Memory 1'})
-%           Rescope all Data Store Memory blocks except for Data Store Memory 1.
+%           Rescopes all Data Store Memory blocks except for Data Store Memory 1.
 
     % Check model argument
     % 1) Ensure the model is open
     try
+        model = bdroot(model);
         assert(ischar(model));
         assert(bdIsLoaded(model));
     catch
@@ -36,14 +37,22 @@ function dataStoreRescope(model, dontMove)
         end
     end
 
-    % Check that dontMove is of type 'cell'
+    % Check dontMove argument 
+    % 1) Ensure it is a cell array
     try
         assert(iscell(dontMove));
     catch
-        error('Invalid argument type in dontMove argument.');
+        error('Argument dontMove must be a cell array.')
     end
-
-    % Check that arguments of D are blocks
+    
+    % 2) Ensure it does not have nesting
+    try
+        assert(~iscellcell(dontMove));
+    catch
+        error('Argument dontMove must be a cell array with no nested cells.')
+    end
+  
+    % Check that dontMove contains blocks
     try
         for i = 1:length(dontMove)
             assert(ischar(dontMove{i}))
@@ -71,11 +80,11 @@ function dataStoreRescope(model, dontMove)
             get_param(dontMove{i}, 'DataStoreName');
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
-                error(['Block "' removeNewline(dontMove{i}) '" does not exist.']);
+                error(['Block ''' removeNewline(dontMove{i}) ''' does not exist.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjHandle')
-                error(['"' removeNewline(num2str(dontMove{i})) '" is not a valid block.']);
+                error(['''' removeNewline(num2str(dontMove{i})) ''' is not a valid block.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
-                error(['Block "' removeNewline(dontMove{i}) '" is not a Data Store block.']);
+                error(['Block ''' removeNewline(dontMove{i}) ''' is not a Data Store block.']);
             end
         end
     end
