@@ -1,15 +1,15 @@
 function rescopeSelected(model, dataStores)
 % RESCOPESELECTED Rescope specific Data Store Memory blocks.
 %
-%   Inports:
+%   Inputs:
 %       model       Simulink model name.
 %       dataStores  Cell array of Data Store Memory block pathnames.
 %
-%   Outports:
+%   Outputs:
 %       N/A
 %
 %   Example:
-%       rescopeSelected(bdroot, gcbs)
+%       >> rescopeSelected(bdroot, gcbs)
 %           Rescopes the selected Data Store Memory blocks in the current Simulink system.
 
     % Check model argument

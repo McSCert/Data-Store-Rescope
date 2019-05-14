@@ -3,13 +3,13 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 %   Note:First three parameters must be of the same length, equal to the
 %   number of rescoped data stores.
 %
-%   Inports:
+%   Inputs:
 %       rescopedBlocks      List of rescoped Data Store Memory block paths.
 %       initialAddresses    List of initial addresses of Data Store Memory blocks.
 %       rescopeAddresses    List of final addresses of Data Store Memory blocks.
 %       model               Simulink system name.
 %
-%   Outports:
+%   Outputs:
 %       N/A
 
     % Perform checks to verify arguments are correct
