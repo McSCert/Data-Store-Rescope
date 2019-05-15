@@ -101,4 +101,5 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     end
     fprintf(file, '-----------------------------------\n\n');
     fclose(file);
+    fprintf('Data Store Rescope Log: %s\n', filename);
 end
