@@ -63,14 +63,13 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 
     % Open log file
     modelpath = which(model);
-
-    if isunix
-        filename = [fileparts(modelpath) '/' model '_RescopeLog.txt'];
-        file = fopen(filename, 'at');
+    if strcmp(modelpath, 'new Simulink model') % Model is new and not saved
+        modelpath = pwd;
     else
-        filename = [fileparts(modelpath) '\' model '_RescopeLog.txt'];
-        file = fopen(filename, 'at');
+        modelpath = fileparts(modelpath);
     end
+    filename = [modelpath filesep model '_RescopeLog.txt'];
+    file = fopen(filename, 'at');
 
     % Print current time and date
     fprintf(file, 'Log of rescope operation at date and time: %s\n\n', datestr(now));
