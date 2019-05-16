@@ -21,25 +21,25 @@ function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, re
     try
         assert(iscellstr(rescopedBlocks))
     catch
-        error('Input argument rescopedBlocks is not a cell array of strings.');
+        error('Input argument rescopedBlocks is not a cell array of character vectors.');
     end
     
     try
         assert(iscellstr(rescopedDSNames))
     catch
-        error('Input argument rescopedDSNames is not a cell array of strings.');
+        error('Input argument rescopedDSNames is not a cell array of character vectors.');
     end
 
     try
         assert(iscellstr(initialAddresses))
     catch
-       error('Input argument initialAddresses is not a cell array of strings.');
+       error('Input argument initialAddresses is not a cell array of character vectors.');
     end
 
     try
         assert(iscellstr(rescopeAddresses))
     catch
-        error('Input argument rescopeAddresses is not a cell array of strings.');
+        error('Input argument rescopeAddresses is not a cell array of character vectors.');
     end
 
     % 2) Check that rescopedBlocks, initialAddresses, rescopeAddresses are
