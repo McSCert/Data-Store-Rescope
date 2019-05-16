@@ -1,6 +1,6 @@
 function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, model)
 % RESCOPEDOCUMENTER Create a log file of the dataStoreResope operation.
-%   Note:First three parameters must be of the same length, equal to the
+%   Note: First three parameters must be of the same length, equal to the
 %   number of rescoped data stores.
 %
 %   Inputs:
@@ -18,28 +18,19 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     try
         assert(iscellstr(rescopedBlocks))
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Input argument DSM is not a cell array of strings.'])
-        help(mfilename)
-        return
+        error('Input argument rescopedBlocks is not a cell array of strings.');
     end
 
     try
         assert(iscellstr(initialAddresses))
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Input argument A1 is not a cell array of strings.'])
-        help(mfilename)
-        return
+       error('Input argument initialAddresses is not a cell array of strings.');
     end
 
     try
         assert(iscellstr(rescopeAddresses))
     catch
-        disp(['Error using ' mfilename ':' char(10) ...
-                ' Input argument A2 is not a cell array of strings.'])
-        help(mfilename)
-        return
+        error('Input argument rescopeAddresses is not a cell array of strings.');
     end
 
     % 2) Check that rescopedBlocks, initialAddresses, rescopeAddresses are
@@ -50,11 +41,10 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
-            disp(['Error using ' mfilename ':' char(10) ...
-                ' Input arguments DSM, A1, and A2 are of different lengths.'])
-            help(mfilename)
+            error('Input arguments rescopedBlocks, initialAddresses, and rescopeAddresses are of different lengths.');
+        else
+            rethrow(E)
         end
-        return
     end
 
     % Get totals
