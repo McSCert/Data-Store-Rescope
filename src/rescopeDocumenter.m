@@ -23,7 +23,7 @@ function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, re
     catch
         error('Input argument rescopedBlocks is not a cell array of character vectors.');
     end
-    
+
     try
         assert(iscellstr(rescopedDSNames))
     catch
@@ -75,7 +75,7 @@ function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, re
     fprintf(file, 'Log of rescope operation at date and time: %s\n\n', datestr(now));
 
     % Print overall statistics for the whole model
-    fprintf(file, 'Total number of Data Store Memory blocks in model: %d\n', total);
+    fprintf(file, 'Total number of Data Store Memory blocks in model (or selected): %d\n', total);
     fprintf(file, 'Total number of Data Store Memory blocks rescoped: %d\n', numRescoped);
     if total == 0
         fprintf(file, 'Percentage of Data Store Memory blocks rescoped: N/A\n\n');
