@@ -428,7 +428,7 @@ function dataStoreRescope(model, dontMove)
             oldName = name;
             while flag
                 try
-                    % Try adding the block in new location
+                    % Try copying the block to the new location
                     rescopedDSMem = add_block(DSCell{DSM}, [allKeys{i} '/' name]);
                     flag = false;
                 catch E
