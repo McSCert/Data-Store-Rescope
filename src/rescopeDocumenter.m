@@ -1,17 +1,19 @@
 function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, rescopeAddresses, model)
 % RESCOPEDOCUMENTER Create a log file of the dataStoreResope operation.
-%   Note: First three parameters must be of the same length, equal to the
-%   number of rescoped data stores.
+%   Note: First four parameters must be of the same length.
 %
 %   Inputs:
 %       rescopedBlocks      List of rescoped Data Store Memory block paths.
 %       rescopedDSNames     List of rescoped Data Store Memory names.
 %       initialAddresses    List of initial addresses of Data Store Memory blocks.
 %       rescopeAddresses    List of final addresses of Data Store Memory blocks.
-%       model               Simulink system name.
+%       model               Simulink model name.
 %
 %   Outputs:
 %       N/A
+%
+%   Side Effects:
+%       Creation of a log file.
 
     % Perform checks to verify arguments are correct
     % 1) Ensure that rescopedBlocks, initialAddresses, rescopeAddresses are
@@ -56,7 +58,7 @@ function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, re
         end
     end
 
-    % Get totals
+    % Get total in model
     total = length(find_system(model, 'BlockType', 'DataStoreMemory'));
 
     % Open log file
