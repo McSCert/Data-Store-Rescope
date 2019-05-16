@@ -1,6 +1,2 @@
     GetCurrentFunctions/
         gcbs.m
-
-    InputHandling/
-        getInput.m
-        iscellcell.m
