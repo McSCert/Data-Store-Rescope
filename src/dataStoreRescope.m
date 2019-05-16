@@ -64,6 +64,7 @@ function dataStoreRescope(model, dontMove)
     % Initial declarations
     dataStoresToIgnore = {};
     memToRescope = {};
+    rescopeNames = {};
     toRescopeAddress = {};
     initialAddress = {};
 
@@ -307,6 +308,7 @@ function dataStoreRescope(model, dontMove)
         % which the block is to be rescoped
         if ~dontMove
             memToRescope{end+1} = dataStoreMem{i};
+            rescopeNames{end+1} = get_param(dataStoreMem{i}, 'DataStoreName');
             initialAddress{end+1} = initialLocation;
             toRescopeAddress{end+1} = lowestCommonAncestor;
         end
@@ -468,7 +470,7 @@ function dataStoreRescope(model, dontMove)
     end
 
     % Create log file to document the operation
-    rescopeDocumenter(memToRescope, initialAddress, toRescopeAddress, model);
+    rescopeDocumenter(memToRescope, rescopeNames, initialAddress, toRescopeAddress, model);
 end
 
 function val = getDataStoreRescopeConfig(parameter, default)

@@ -1,10 +1,11 @@
-function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, model)
+function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, rescopeAddresses, model)
 % RESCOPEDOCUMENTER Create a log file of the dataStoreResope operation.
 %   Note: First three parameters must be of the same length, equal to the
 %   number of rescoped data stores.
 %
 %   Inputs:
 %       rescopedBlocks      List of rescoped Data Store Memory block paths.
+%       rescopedDSNames     List of rescoped Data Store Memory names.
 %       initialAddresses    List of initial addresses of Data Store Memory blocks.
 %       rescopeAddresses    List of final addresses of Data Store Memory blocks.
 %       model               Simulink system name.
@@ -19,6 +20,12 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
         assert(iscellstr(rescopedBlocks))
     catch
         error('Input argument rescopedBlocks is not a cell array of strings.');
+    end
+    
+    try
+        assert(iscellstr(rescopedDSNames))
+    catch
+        error('Input argument rescopedDSNames is not a cell array of strings.');
     end
 
     try
@@ -35,9 +42,11 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 
     % 2) Check that rescopedBlocks, initialAddresses, rescopeAddresses are
     % the same length
+    numRescoped = length(rescopedBlocks);
     try
-        assert((length(rescopedBlocks) == length(initialAddresses)) && ...
-            (length(rescopeAddresses) == length(rescopedBlocks)));
+        assert((numRescoped == length(initialAddresses)) && ...
+            (numRescoped == length(rescopeAddresses)) && ...
+            (numRescoped == length(rescopedDSNames)));
     catch E
         if strcmp(E.identifier, 'MATLAB:assert:failed') || ...
                 strcmp(E.identifier, 'MATLAB:assertion:failed')
@@ -49,7 +58,6 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
 
     % Get totals
     total = length(find_system(model, 'BlockType', 'DataStoreMemory'));
-    numRescoped = length(rescopedBlocks);
 
     % Open log file
     modelpath = which(model);
@@ -67,21 +75,22 @@ function rescopeDocumenter(rescopedBlocks, initialAddresses, rescopeAddresses, m
     % Print overall statistics for the whole model
     fprintf(file, 'Total number of Data Store Memory blocks in model: %d\n', total);
     fprintf(file, 'Total number of Data Store Memory blocks rescoped: %d\n', numRescoped);
-    if (total~=0)
-        fprintf(file, 'Percentage of Data Store Memory blocks rescoped: %d%%\n\n', round((numRescoped/total)*100));
-    else
+    if total == 0
         fprintf(file, 'Percentage of Data Store Memory blocks rescoped: N/A\n\n');
+    else
+        fprintf(file, 'Percentage of Data Store Memory blocks rescoped: %d%%\n\n', round((numRescoped/total)*100));
     end
     fprintf(file, 'List of rescoped Data Store Memory blocks:\n\n');
 
     % Print the change in addresses for each rescoped block
-    for doc = 1:length(rescopedBlocks)
-        if ~strcmp(initialAddresses{doc}, rescopeAddresses{doc})
+    for i = 1:length(rescopedBlocks)
+        if ~strcmp(initialAddresses{i}, rescopeAddresses{i})
 
             % Display name containing newlines with spaces instead
-            fprintf(file, 'Block Name: %s\n', removeNewline(rescopedBlocks{doc}));
-            fprintf(file, 'Initial Location: %s\n', removeNewline(initialAddresses{doc}));
-            fprintf(file, 'New Location: %s\n\n', removeNewline(rescopeAddresses{doc}));
+            fprintf(file, 'Data Store Name: %s\n', rescopedDSNames{i});
+            fprintf(file, 'Block Name: %s\n', removeNewline(rescopedBlocks{i}));
+            fprintf(file, 'Initial Location: %s\n', removeNewline(initialAddresses{i}));
+            fprintf(file, 'New Location: %s\n\n', removeNewline(rescopeAddresses{i}));
         end
     end
 
