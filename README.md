@@ -10,3 +10,5 @@ The Data Store Rescope Tool (formerly known as the Data Store Push-Down Tool) id
 For installation and other information, please see the [User Guide](doc/DataStoreRescope_UserGuide.pdf).
 
 This tool is also available for download on the [Matlab Central File Exchange](https://www.mathworks.com/matlabcentral/fileexchange/51160-data-store-rescope-tool).
+
+[![View Data Store Rescope Tool on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/51160-data-store-rescope-tool)
