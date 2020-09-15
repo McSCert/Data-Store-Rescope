@@ -37,21 +37,21 @@ function dataStoreRescope(model, dontMove)
         end
     end
 
-    % Check dontMove argument 
+    % Check dontMove argument
     % 1) Ensure it is a cell array
     try
         assert(iscell(dontMove));
     catch
         error('Argument dontMove must be a cell array.')
     end
-    
+
     % 2) Ensure it does not have nesting
     try
         assert(~iscellcell(dontMove));
     catch
         error('Argument dontMove must be a cell array with no nested cells.')
     end
-  
+
     % Check that dontMove contains blocks
     try
         for i = 1:length(dontMove)
@@ -81,11 +81,11 @@ function dataStoreRescope(model, dontMove)
             get_param(dontMove{i}, 'DataStoreName');
         catch E
             if strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjectName')
-                error(['Block ''' removeNewline(dontMove{i}) ''' does not exist.']);
+                error(['Block ''' replaceNewline(dontMove{i}) ''' does not exist.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:InvSimulinkObjHandle')
-                error(['''' removeNewline(num2str(dontMove{i})) ''' is not a valid block.']);
+                error(['''' replaceNewline(num2str(dontMove{i})) ''' is not a valid block.']);
             elseif strcmp(E.identifier, 'Simulink:Commands:ParamUnknown')
-                error(['Block ''' removeNewline(dontMove{i}) ''' is not a Data Store block.']);
+                error(['Block ''' replaceNewline(dontMove{i}) ''' is not a Data Store block.']);
             end
         end
     end
@@ -223,14 +223,14 @@ function dataStoreRescope(model, dontMove)
                     end
                     if flag
 
-                        msg = ['Block "' removeNewline(dataStoreReadWrite{j}) ...
+                        msg = ['Block "' replaceNewline(dataStoreReadWrite{j}) ...
                         '" is out of scope of all Data Store Memory blocks ' ...
                         'with DataStoreName "' dataStoreName '".' char(10) ...
                         'Due to multiple matching Data Store Memory ' ...
                         'blocks in the model with this DataStoreName, ' ...
                         'it cannot be determined which is to be used.' char(10) ...
                         'If the desired Data Story Memory block ' ...
-                        'is "' removeNewline(dataStoreMem{i}) ...
+                        'is "' replaceNewline(dataStoreMem{i}) ...
                         '", move it to the root, and re-run this operation.'];
                         warning(msg);
                     end
@@ -448,9 +448,9 @@ function dataStoreRescope(model, dontMove)
 
             % Notify user if 'Name' parameter of a rescoped block was changed
             if ~strcmp(oldName, name)
-                msg = ['Data Store Memory block with name "' removeNewline(oldName) ...
-                '" already exists at location ' removeNewline(allKeys{i}) '.' char(10) ...
-                'The rescoped block has been renamed to "' removeNewline(name) '".'];
+                msg = ['Data Store Memory block with name "' replaceNewline(oldName) ...
+                '" already exists at location ' replaceNewline(allKeys{i}) '.' char(10) ...
+                'The rescoped block has been renamed to "' replaceNewline(name) '".'];
                 warning(msg);
             end
 

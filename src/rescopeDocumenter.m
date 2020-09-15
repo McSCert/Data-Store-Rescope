@@ -90,9 +90,9 @@ function rescopeDocumenter(rescopedBlocks, rescopedDSNames, initialAddresses, re
 
             % Display name containing newlines with spaces instead
             fprintf(file, 'Data Store Name: %s\n', rescopedDSNames{i});
-            fprintf(file, 'Block Name: %s\n', removeNewline(rescopedBlocks{i}));
-            fprintf(file, 'Initial Location: %s\n', removeNewline(initialAddresses{i}));
-            fprintf(file, 'New Location: %s\n\n', removeNewline(rescopeAddresses{i}));
+            fprintf(file, 'Block Name: %s\n', replaceNewline(rescopedBlocks{i}));
+            fprintf(file, 'Initial Location: %s\n', replaceNewline(initialAddresses{i}));
+            fprintf(file, 'New Location: %s\n\n', replaceNewline(rescopeAddresses{i}));
         end
     end
 
